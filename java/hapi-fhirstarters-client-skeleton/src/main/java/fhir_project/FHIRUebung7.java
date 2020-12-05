@@ -20,7 +20,7 @@ public class FHIRUebung7 {
         IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
 
         //first bulletpoint - create Patient
-		createPatient(ctx, client);
+		   createPatient(ctx, client);
 
         //second bulletpoint - list all patients in file
         readAllPatientsAndNamesWriteToFile(ctx, client);
@@ -33,7 +33,46 @@ public class FHIRUebung7 {
 
         //fifth bulletpoint - create encounter
         createEncounter(ctx, client);
+
+        //bulletpoint - create Practioner
+       createPractioner(ctx,client);
     }
+    public static void createImmunization(FhirContext ctx, IGenericClient client){
+       Immunization Impfung = new Immunization();
+   }
+   private static Immunization getImmunizationById(IGenericClient client, String ImmunizationId) {
+      try {
+         return client.read().resource(Immunization.class).withId(ImmunizationId).execute();
+      } catch (ResourceNotFoundException e) {
+         System.out.println("Resource not found!");
+         return null;
+      }
+   }
+
+    public static  void createPractioner(FhirContext ctx, IGenericClient client){
+       Practitioner Doctor= new Practitioner();
+       Doctor.addName().addGiven("Hermann").setFamily("Müller");
+       Doctor.addIdentifier();
+       // Create the resource on the server
+       MethodOutcome outcome = client
+          .create()
+          .resource(Doctor)
+          .execute();
+
+       // Log the ID that the server assigned
+       String id = outcome.getId().toString();
+       Practitioner createdPractitioner = getPractitionerById(client, id);
+       exportToJsonFile(ctx, createdPractitioner);
+
+    }
+   private static Practitioner getPractitionerById(IGenericClient client, String PractitionerId) {
+      try {
+         return client.read().resource(Practitioner.class).withId(PractitionerId).execute();
+      } catch (ResourceNotFoundException e) {
+         System.out.println("Resource not found!");
+         return null;
+      }
+   }
 
     /**
      * Create a patient and write patient in json format to file "patient.json"
@@ -51,6 +90,7 @@ public class FHIRUebung7 {
         newPatient.setGender(Enumerations.AdministrativeGender.FEMALE);
         newPatient.addName().addGiven("Antonie").setFamily("Grünlich");
         newPatient.setBirthDateElement(new DateType("1827-08-06"));
+        newPatient.setBirthDateElement(new DateType( ));
 
         // Create the resource on the server
         MethodOutcome outcome = client
