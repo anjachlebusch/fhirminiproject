@@ -25,8 +25,6 @@ public class FHIRUebung7 {
         //third bulletpoint - create organization
         Organization organization = createOrganization(ctx, client, "Geburtsstation \"MIO\" Hosptial Luebeck");
 
-        //fourth bulletpoint - create doctor and nurse
-        createCareTeam(ctx, client, organization);
 
         //fifth bulletpoint - create encounter
         createEncounter(ctx, client);
