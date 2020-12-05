@@ -23,7 +23,7 @@ public class FHIRUebung7 {
 		   createPatient(ctx, client);
 
         //third bulletpoint - create organization
-        Organization organization = createOrganization(ctx, client, "Geburtsstation \"MIO\" Hosptial Luebeck");
+        Organization organization = createOrganization(ctx, client, "Arztpraxis");
 
 
         //fifth bulletpoint - create encounter
@@ -48,7 +48,7 @@ public class FHIRUebung7 {
    }
    private static Medication getMedicationById(IGenericClient client, String MedicationId) {
       try {
-         return client.read().resource(Medication.class).withId(MediciationId).execute();
+         return client.read().resource(Medication.class).withId(MedicationId).execute();
       } catch (ResourceNotFoundException e) {
          System.out.println("Resource not found!");
          return null;
@@ -198,7 +198,7 @@ public class FHIRUebung7 {
         codeList.add(snomedCodeEncounterForSign);
         CodeableConcept reasonCode = new CodeableConcept()
                 .setCoding(codeList)
-                .setText("Birth");
+                .setText("Immunization");
         Appointment appointment = new Appointment()
                 .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
 
