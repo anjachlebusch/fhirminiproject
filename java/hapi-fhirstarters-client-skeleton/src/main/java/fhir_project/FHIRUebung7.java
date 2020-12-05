@@ -45,6 +45,7 @@ public class FHIRUebung7 {
    }
    public static void createMedication(FhirContext ctx, IGenericClient client){
       Medication Impfstoff = new Medication();
+
    }
    private static Medication getMedicationById(IGenericClient client, String MedicationId) {
       try {
@@ -97,6 +98,8 @@ public class FHIRUebung7 {
         newPatient.addName().addGiven("Antonie").setFamily("Grünlich");
         newPatient.setBirthDateElement(new DateType("1827-08-06"));
         newPatient.setBirthDateElement(new DateType( ));
+        newPatient.addExtension().setUrl("http://www.kh-uzl.de/fhir/patients-birthPlace")// oder ?: http://hl7.org/fhir/StructureDefinition/patient-birthPlace
+          .setValue(new StringType("Hamburg"));
 
         // Create the resource on the server
         MethodOutcome outcome = client
