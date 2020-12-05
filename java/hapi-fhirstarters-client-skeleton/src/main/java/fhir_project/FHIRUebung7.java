@@ -22,9 +22,6 @@ public class FHIRUebung7 {
         //first bulletpoint - create Patient
 		   createPatient(ctx, client);
 
-        //second bulletpoint - list all patients in file
-        readAllPatientsAndNamesWriteToFile(ctx, client);
-
         //third bulletpoint - create organization
         Organization organization = createOrganization(ctx, client, "Geburtsstation \"MIO\" Hosptial Luebeck");
 
@@ -43,6 +40,17 @@ public class FHIRUebung7 {
    private static Immunization getImmunizationById(IGenericClient client, String ImmunizationId) {
       try {
          return client.read().resource(Immunization.class).withId(ImmunizationId).execute();
+      } catch (ResourceNotFoundException e) {
+         System.out.println("Resource not found!");
+         return null;
+      }
+   }
+   public static void createMedication(FhirContext ctx, IGenericClient client){
+      Medication Impfstoff = new Medication();
+   }
+   private static Medication getMedicationById(IGenericClient client, String MedicationId) {
+      try {
+         return client.read().resource(Medication.class).withId(MediciationId).execute();
       } catch (ResourceNotFoundException e) {
          System.out.println("Resource not found!");
          return null;
@@ -133,38 +141,6 @@ public class FHIRUebung7 {
         }
     }
 
-    public static void readAllPatientsAndNamesWriteToFile(FhirContext ctx, IGenericClient client) {
-        Bundle patients;
-        try {
-            patients = client
-                    .search()
-                    .forResource(Patient.class)
-                    .returnBundle(Bundle.class)
-                    .elementsSubset("name")
-                    .count(354)
-                    .execute();
-
-
-        } catch (ResourceNotFoundException e) {
-            System.out.println("Resource not found!");
-            return;
-        }
-
-
-        try {
-
-            FileWriter patientFileWriter = new FileWriter("patients.json");
-
-            ctx.newJsonParser()
-                    .setPrettyPrint(true)
-                    .encodeResourceToWriter(patients, patientFileWriter);
-
-        } catch (IOException exception) {
-            System.out.println("An error occurred.");
-            exception.printStackTrace();
-        }
-
-    }
 
     /**
      * Create an organization
@@ -174,15 +150,15 @@ public class FHIRUebung7 {
      */
     public static Organization createOrganization(FhirContext ctx, IGenericClient client, String name) {
         // Create an organization
-        Organization organization = new Organization();
+        Organization Arztpraxis = new Organization();
 
         // add alias to organization
-        organization.addAlias(name);
+        Arztpraxis.addAlias(name);
 
         // Create the resource on the server
         MethodOutcome outcome = client
                 .create()
-                .resource(organization)
+                .resource(Arztpraxis)
                 .execute();
 
         // Log the ID that the server assigned
@@ -207,65 +183,6 @@ public class FHIRUebung7 {
         }
     }
 
-    /**
-     * Create careTeam
-     * @param ctx fhir context
-     * @param client fhir client
-     */
-    public static void createCareTeam(FhirContext ctx, IGenericClient client, Organization organization) {
-        // Create a careTeam
-        CareTeam careTeam = new CareTeam();
-        CareTeam.CareTeamParticipantComponent doctor = createDoctor();
-        CareTeam.CareTeamParticipantComponent nurse = createNurse();
-
-        // add attributes to careTeam
-        careTeam.addManagingOrganization(new Reference(organization))
-                .addParticipant(doctor).addParticipant(nurse);
-
-        // Create the resource on the server
-        MethodOutcome outcome = client
-                .create()
-                .resource(careTeam)
-                .execute();
-
-        // Log the ID that the server assigned
-        String id = outcome.getId().toString();
-        CareTeam createdCareTeam = getCareTeamById(client, id);
-        exportToJsonFile(ctx, createdCareTeam);
-    }
-
-    private static CareTeam.CareTeamParticipantComponent createDoctor() {
-        CareTeam.CareTeamParticipantComponent doctor = new CareTeam.CareTeamParticipantComponent();
-        CodeableConcept doctorRole = new CodeableConcept().setText("Doctor");
-        ArrayList roleList = new ArrayList<CodeableConcept>();
-        roleList.add(doctorRole);
-        doctor.setRole(roleList);
-        return doctor;
-    }
-
-    private static CareTeam.CareTeamParticipantComponent createNurse() {
-        CareTeam.CareTeamParticipantComponent nurse = new CareTeam.CareTeamParticipantComponent();
-        CodeableConcept nurseRole = new CodeableConcept().setText("Nurse");
-        ArrayList roleList = new ArrayList<CodeableConcept>();
-        roleList.add(nurseRole);
-        nurse.setRole(roleList);
-        return nurse;
-    }
-
-    /**
-     * gets careTeam by id
-     * @param client
-     * @param careTeamId
-     * @return CareTeam object
-     */
-    private static CareTeam getCareTeamById(IGenericClient client, String careTeamId) {
-        try {
-            return client.read().resource(CareTeam.class).withId(careTeamId).execute();
-        } catch (ResourceNotFoundException e) {
-            System.out.println("Resource not found!");
-            return null;
-        }
-    }
 
     /**
      * Create Encounter
