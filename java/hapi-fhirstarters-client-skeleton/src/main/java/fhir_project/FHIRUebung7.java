@@ -34,6 +34,8 @@ public class FHIRUebung7 {
     }
     public static void createImmunization(FhirContext ctx, IGenericClient client){
        Immunization Impfung = new Immunization();
+       Impfung.setDoseQuantity(new Quantity().setValue(14));
+
    }
    private static Immunization getImmunizationById(IGenericClient client, String ImmunizationId) {
       try {
@@ -48,6 +50,8 @@ public class FHIRUebung7 {
       Impfstoff.getManufacturer();
 
    }
+
+   //Medication don´t know if we need?
    private static Medication getMedicationById(IGenericClient client, String MedicationId) {
       try {
          return client.read().resource(Medication.class).withId(MedicationId).execute();
