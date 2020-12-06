@@ -58,13 +58,17 @@ public class FHIRUebung7 {
    }
 
     public static  void createPractioner(FhirContext ctx, IGenericClient client){
-       Practitioner Doctor= new Practitioner();
-       Doctor.addName().addGiven("Hermann").setFamily("Müller");
-       Doctor.addIdentifier();
+       Practitioner doctor= new Practitioner();
+       HumanName doctorsName = new HumanName();
+       doctorsName.addPrefix("Dr.");
+       doctorsName.addGiven("Frauke");
+       doctorsName.setFamily("Lehmann");
+       doctor.addName(doctorsName);
+       doctor.addIdentifier();
        // Create the resource on the server
        MethodOutcome outcome = client
           .create()
-          .resource(Doctor)
+          .resource(doctor)
           .execute();
 
        // Log the ID that the server assigned
