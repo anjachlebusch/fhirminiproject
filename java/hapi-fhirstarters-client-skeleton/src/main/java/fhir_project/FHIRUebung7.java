@@ -91,6 +91,41 @@ public class FHIRUebung7 {
      */
     public static void createPatient(FhirContext ctx, IGenericClient client) {
         // Create a patient
+       // Version from Hannes
+       // Empty Patient Instance
+       Patient antonie = new Patient();
+
+       // Identifier
+       Identifier identifier = new Identifier();
+       identifier.setValue("1234567890");
+       identifier.setSystem("http://kh-uzl.de/fhir/patients");
+       antonie.addIdentifier(identifier);
+
+       // Official Name
+       HumanName gruenlich = new HumanName();
+       gruenlich.addGiven("Antonie");
+       gruenlich.setFamily("Grünlich");
+       gruenlich.setUse(HumanName.NameUse.OFFICIAL);
+       antonie.addName(gruenlich);
+
+       // Maiden Name
+       HumanName bruddenbooks = new HumanName();
+       bruddenbooks.addGiven("Antonie");
+       bruddenbooks.setFamily("Bruddenbooks");
+       bruddenbooks.setUse(HumanName.NameUse.MAIDEN);
+       antonie.addName(bruddenbooks);
+
+       // Birthday
+       Calendar cal = Calendar.getInstance();
+       // CAVE: Java integer starts by 0!
+       cal.set(1827, 7, 6);
+       antonie.setBirthDate(cal.getTime());
+
+       //Birthplace
+       antonie.addExtension().setUrl("http://hl7.org/fhir/StructureDefinition/patient-birthPlace") //oder http://www.kh-uzl.de/fhir/patients-birthPlace?
+          .setValue(new StringType("Hamburg"));
+
+       //Version from us
         Patient newPatient = new Patient();
 
         // Populate the patient with information
