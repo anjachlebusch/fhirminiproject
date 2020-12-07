@@ -8,10 +8,7 @@ import org.hl7.fhir.r4.model.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Random;
+import java.util.*;
 
 public class FHIRUebung7 {
     public static void main(String[] args) {
@@ -19,82 +16,7 @@ public class FHIRUebung7 {
         FhirContext ctx = FhirContext.forR4();
         IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
 
-        //first bulletpoint - create Patient
-		   createPatient(ctx, client);
-
-        //third bulletpoint - create organization
-        Organization organization = createOrganization(ctx, client, "Arztpraxis");
-
-
-        //fifth bulletpoint - create encounter
-        createEncounter(ctx, client);
-
-        //bulletpoint - create Practioner
-       createPractioner(ctx,client);
-    }
-    public static void createImmunization(FhirContext ctx, IGenericClient client){
-       Immunization Impfung = new Immunization();
-       Impfung.setDoseQuantity(new Quantity().setValue(14));
-
-   }
-   private static Immunization getImmunizationById(IGenericClient client, String ImmunizationId) {
-      try {
-         return client.read().resource(Immunization.class).withId(ImmunizationId).execute();
-      } catch (ResourceNotFoundException e) {
-         System.out.println("Resource not found!");
-         return null;
-      }
-   }
-   public static void createMedication(FhirContext ctx, IGenericClient client){
-      Medication Impfstoff = new Medication();
-      Impfstoff.getManufacturer();
-
-   }
-
-   //Medication don´t know if we need?
-   private static Medication getMedicationById(IGenericClient client, String MedicationId) {
-      try {
-         return client.read().resource(Medication.class).withId(MedicationId).execute();
-      } catch (ResourceNotFoundException e) {
-         System.out.println("Resource not found!");
-         return null;
-      }
-   }
-
-    public static  void createPractioner(FhirContext ctx, IGenericClient client){
-       Practitioner doctor= new Practitioner();
-       HumanName doctorsName = new HumanName();
-       doctorsName.addPrefix("Dr.");
-       doctorsName.addGiven("Frauke");
-       doctorsName.setFamily("Lehmann");
-       doctor.addName(doctorsName);
-       doctor.addIdentifier();
-       // Create the resource on the server
-       MethodOutcome outcome = client
-          .create()
-          .resource(doctor)
-          .execute();
-
-       // Log the ID that the server assigned
-       String id = outcome.getId().toString();
-       Practitioner createdPractitioner = getPractitionerById(client, id);
-       exportToJsonFile(ctx, createdPractitioner);
-
-    }
-   private static Practitioner getPractitionerById(IGenericClient client, String PractitionerId) {
-      try {
-         return client.read().resource(Practitioner.class).withId(PractitionerId).execute();
-      } catch (ResourceNotFoundException e) {
-         System.out.println("Resource not found!");
-         return null;
-      }
-   }
-
-    /**
-     * Create a patient and write patient in json format to file "patient.json"
-     */
-    public static void createPatient(FhirContext ctx, IGenericClient client) {
-        // Create a patient
+       // Create a patient
        // Version from Hannes
        // Empty Patient Instance
        Patient antonie = new Patient();
@@ -112,13 +34,6 @@ public class FHIRUebung7 {
        gruenlich.setUse(HumanName.NameUse.OFFICIAL);
        antonie.addName(gruenlich);
 
-       // Maiden Name
-       HumanName bruddenbooks = new HumanName();
-       bruddenbooks.addGiven("Antonie");
-       bruddenbooks.setFamily("Bruddenbooks");
-       bruddenbooks.setUse(HumanName.NameUse.MAIDEN);
-       antonie.addName(bruddenbooks);
-
        // Birthday
        Calendar cal = Calendar.getInstance();
        // CAVE: Java integer starts by 0!
@@ -126,47 +41,115 @@ public class FHIRUebung7 {
        antonie.setBirthDate(cal.getTime());
 
        //Birthplace
-       antonie.addExtension().setUrl("http://hl7.org/fhir/StructureDefinition/patient-birthPlace") //oder http://www.kh-uzl.de/fhir/patients-birthPlace?
+       antonie.addExtension().setUrl("http://hl7.org/fhir/StructureDefinition/patient-birthPlace")
           .setValue(new StringType("Hamburg"));
 
-       //Version from us
-        Patient newPatient = new Patient();
+       //Address
+       antonie.addAddress(
+          new Address()
+             .setLine(Collections.singletonList(new StringType("Stresemannstraße 12")))
+             .setPostalCode("22179")
+             .setCity("Hamburg")
+       );
 
-        // Populate the patient with information
-        int value = new Random().nextInt();
-        newPatient
-                .addIdentifier()
-                .setSystem("http://www.kh-uzl.de/fhir/patients")
-                .setValue(Integer.toString(value));
-        newPatient.setGender(Enumerations.AdministrativeGender.FEMALE);
-        newPatient.addName().addGiven("Antonie").setFamily("Grünlich");
-        newPatient.setBirthDateElement(new DateType("1827-08-06"));
-        newPatient.setBirthDateElement(new DateType( ));
-        newPatient.addExtension().setUrl("http://hl7.org/fhir/StructureDefinition/patient-birthPlace") //oder http://www.kh-uzl.de/fhir/patients-birthPlace?
-          .setValue(new StringType("Hamburg"));
+       //Passport number
+       antonie.addExtension().setUrl("http://acme.org/fhir/StructureDefinition/passport-number")
+        .setValue(new StringType("12345ABC"));
 
-        // Create the resource on the server
-        MethodOutcome outcome = client
-                .create()
-                .resource(newPatient)
-                .execute();
+       //Riskfactors for immunization
+       //TODO: do we need this???
+       RiskAssessment risikoFaktoren = new RiskAssessment();
 
-        // Log the ID that the server assigned
-        String id = outcome.getId().toString();
-        Patient createdPatient = getPatientById(client, id);
-        if(createdPatient != null){
-            exportToJsonFile(ctx, createdPatient);
-        }
+       //Blood type
+       Observation bloodType = new Observation()
+          .setStatus(Observation.ObservationStatus.FINAL)
+          .setCategory(
+             Collections.singletonList(new CodeableConcept().setCoding(
+                Collections.singletonList(new Coding("http://terminology.hl7.org/CodeSystem/observation-category", "Laboratory", "The results of observations generated by laboratories. Laboratory results are typically generated by laboratories providing analytic services in areas such as chemistry, hematology, serology, histology, cytology, anatomic pathology (including digital pathology), microbiology, and/or virology. These observations are based on analysis of specimens obtained from the patient and submitted to the laboratory."))
+             ))
+          )
+          .setCode(
+             new CodeableConcept().setCoding(
+                Collections.singletonList(new Coding("http ://loinc.org", "882-1", "ABO and Rh group [Type] in Blood"))
+             )
+          )
+          .setSubject(new Reference(antonie))
+          .setEffective(new DateTimeType(new GregorianCalendar(1900, Calendar.APRIL, 12)))
+          .setValue(new CodeableConcept().setCoding(
+             Arrays.asList(new Coding("http://snomed.info/sct", "112144000", "Blood group A (finding)"),
+             new Coding("http://snomed.info/sct", "165747007", "RhD positive (finding)")))
+          );
+
+
+       // Impfung
+       Immunization Impfung = new Immunization();
+       Impfung.setPatient(new Reference(antonie))
+          .setVaccineCode(new CodeableConcept()
+             .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
+          )
+          .setLotNumber("123987")
+          .setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
+          .setOccurrence(new GregorianCalendar(1895, Calendar.OCTOBER, 9))
+          .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(/*TODO: hier Arzt referenzieren*/)))
+          //TODO: add Encounter
+          .setEncounter();
+
+
+       //Arztpraxis
+       Organization Arztpraxis = new Organization()
+          .addAlias("Schöne Praxis")
+          .addAddress(
+             new Address()
+                .setLine(Collections.singletonList(new StringType("Max-Brauer-Allee 122")))
+                .setPostalCode("22179")
+                .setCity("Hamburg")
+          )
+          .addTelecom(new ContactPoint()
+             .setSystem(ContactPoint.ContactPointSystem.PHONE)
+             .setValue("040/678123"));
+
+       //Arzt
+       Practitioner doctor= new Practitioner();
+       HumanName doctorsName = new HumanName();
+       doctorsName.addPrefix("Dr.");
+       doctorsName.addGiven("Frauke");
+       doctorsName.setFamily("Lehmann");
+       doctor.addName(doctorsName);
+       //TODO: Unterschrift als Identifier?
+       doctor.addIdentifier();
+       //TODO: brauchen wir eine Organization (Arztpraxis) oder soll die Adresse + Telefon direkt an den Arzt?
+
+       PractitionerRole doctorRole = new PractitionerRole();
+       doctorRole.setPractitionerTarget(doctor).setPractitioner(new Reference(doctor));
+       doctorRole.setOrganizationTarget(Arztpraxis).setOrganization(new Reference(Arztpraxis));
+       doctorRole.addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
+          "A qualified/registered medical practitioner")));
+
+      //Appointent
+       Appointment appointment = new Appointment()
+          .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+
+       //Encounter
+       Encounter vaccineEncounter = new Encounter();
+       vaccineEncounter.setStatus(Encounter.EncounterStatus.FINISHED);
+       vaccineEncounter.setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
+          "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."));
+       vaccineEncounter.setServiceType(
+          new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")));
+       vaccineEncounter.setSubjectTarget(antonie).setSubject(new Reference(antonie));
+       vaccineEncounter.addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)));
+       vaccineEncounter.addReasonCode(
+          /*TODO: look at server which reasoncode makes sense*/
+          new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/encounter-reason", "148477008", "Immunization not offered")));
+       vaccineEncounter.addAppointment(new Reference(appointment));
+
+       //Anti-Körper-Test
+       Observation immunizationTest = new Observation()
+          .addBasedOn(/*TODO: add Encounter here*/);
+
     }
 
-    private static Patient getPatientById(IGenericClient client, String patientId) {
-        try {
-            return client.read().resource(Patient.class).withUrl(patientId).execute();
-        } catch (ResourceNotFoundException e) {
-            System.out.println("Resource not found!");
-            return null;
-        }
-    }
+
 
     /**
      * helper for writing resource to Json-File
