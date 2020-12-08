@@ -86,7 +86,7 @@ public class FHIRUebung7 {
                 Collections.singletonList(new Coding("http ://loinc.org", "882-1", "ABO and Rh group [Type] in Blood"))
              )
           )
-          .setSubject(new Reference(antonie))
+          .setSubject(new Reference(antonie.getIdElement().getValue()))
           .setEffective(new DateTimeType(new GregorianCalendar(1900, Calendar.APRIL, 12)))
           .setValue(new CodeableConcept().setCoding(
              Arrays.asList(new Coding("http://snomed.info/sct", "112144000", "Blood group A (finding)"),
@@ -141,8 +141,8 @@ public class FHIRUebung7 {
           .setMethod(Bundle.HTTPVerb.POST);
 
        PractitionerRole doctorRole = new PractitionerRole();
-       doctorRole.setPractitionerTarget(doctor).setPractitioner(new Reference(doctor));
-       doctorRole.setOrganizationTarget(Arztpraxis).setOrganization(new Reference(Arztpraxis));
+       doctorRole.setPractitionerTarget(doctor).setPractitioner(new Reference(doctor.getIdElement().getValue()));
+       doctorRole.setOrganizationTarget(Arztpraxis).setOrganization(new Reference(Arztpraxis.getIdElement().getValue()));
        doctorRole.addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
           "A qualified/registered medical practitioner")));
 
@@ -189,14 +189,14 @@ public class FHIRUebung7 {
           "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
          .setServiceType(
           new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
-         .setSubjectTarget(antonie).setSubject(new Reference(antonie))
-         .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)))
+         .setSubject(new Reference(antonie.getIdElement().getValue()))
+         .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor.getIdElement().getValue())))
          .addReasonCode(
              new CodeableConcept(
                 new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
              ).setText("Immunization")
          )
-         .addAppointment(new Reference(vaccineAppointment));
+         .addAppointment(new Reference(vaccineAppointment.getIdElement().getValue()));
 
        //add to bundle
        vaccineEncounter.setId(IdType.newRandomUuid());
@@ -214,14 +214,14 @@ public class FHIRUebung7 {
           "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
        .setServiceType(
           new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
-       .setSubjectTarget(antonie).setSubject(new Reference(antonie))
-       .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)))
+       .setSubject(new Reference(antonie.getIdElement().getValue()))
+       .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor.getIdElement().getValue())))
        .addReasonCode(
           new CodeableConcept(
              new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
           ).setText("anti-gen test")
        )
-       .addAppointment(new Reference(roetelnAntiGenAppointment));
+       .addAppointment(new Reference(roetelnAntiGenAppointment.getIdElement().getValue()));
 
        //add to bundle
        roetelnEncounter.setId(IdType.newRandomUuid());
@@ -238,14 +238,14 @@ public class FHIRUebung7 {
           "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
        .setServiceType(
           new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
-       .setSubjectTarget(antonie).setSubject(new Reference(antonie))
-       .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)))
+       .setSubject(new Reference(antonie.getIdElement().getValue()))
+       .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor.getIdElement().getValue())))
        .addReasonCode(
           new CodeableConcept(
              new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
           ).setText("anti-gen test")
        )
-       .addAppointment(new Reference(covidAntiGenAppointment));
+       .addAppointment(new Reference(covidAntiGenAppointment.getIdElement().getValue()));
 
        //add to bundle
        covidEncounter.setId(IdType.newRandomUuid());
@@ -257,14 +257,14 @@ public class FHIRUebung7 {
 
        // Impfung
        Immunization Impfung = new Immunization()
-          .setPatient(new Reference(antonie))
+          .setPatient(new Reference(antonie.getIdElement().getValue()))
           .setVaccineCode(new CodeableConcept()
              .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
           )
           .setLotNumber("123987")
           .setOccurrence(new DateTimeType(new GregorianCalendar(1895, Calendar.OCTOBER, 9)))
-          .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor))))
-          .setEncounter(new Reference(vaccineEncounter));
+          .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor.getIdElement().getValue()))))
+          .setEncounter(new Reference(vaccineEncounter.getIdElement().getValue()));
           //.setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
 
        //add to bundle
@@ -286,12 +286,12 @@ public class FHIRUebung7 {
                 new Coding("http://loinc.org", "74415-1","display: Rubella virus IgG Ab [Presence] in Body fluid by Immunoassay")
              )
           )
-          .setSubject(new Reference(antonie))
-          .addPerformer(new Reference(doctor))
+          .setSubject(new Reference(antonie.getIdElement().getValue()))
+          .addPerformer(new Reference(doctor.getIdElement().getValue()))
           .setValue(new CodeableConcept(
              new Coding("http://snomed.info/sct", "260385009", "Negative (qualifier value)")
           ).setText("Schutz nicht vorhanden"))
-          .setEncounter(new Reference(roetelnEncounter));
+          .setEncounter(new Reference(roetelnEncounter.getIdElement().getValue()));
 
        //add to bundle
        immunizationTestRoeteln.setId(IdType.newRandomUuid());
@@ -313,12 +313,12 @@ public class FHIRUebung7 {
                 new Coding("http://loinc.org", "95209-3", "SARS-CoV+SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay")
              )
           )
-          .setSubject(new Reference(antonie))
-          .addPerformer(new Reference(doctor))
+          .setSubject(new Reference(antonie.getIdElement().getValue()))
+          .addPerformer(new Reference(doctor.getIdElement().getValue()))
           .setValue(new CodeableConcept(
              new Coding("http://snomed.info/sct", "10828004", "Positive (qualifier value)")
           ).setText("Schutz vorhanden"))
-          .setEncounter(new Reference(covidEncounter));
+          .setEncounter(new Reference(covidEncounter.getIdElement().getValue()));
 
        //add to bundle
        immunizationTestCovid.setId(IdType.newRandomUuid());
