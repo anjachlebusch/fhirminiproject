@@ -61,6 +61,7 @@ public class FHIRUebung7 {
        antonie.addExtension().setUrl("http://acme.org/fhir/StructureDefinition/passport-number")
         .setValue(new StringType("12345ABC"));
 
+       antonie.setId(IdType.newRandomUuid());
        //add patient to bundle
        bundle.addEntry()
           .setResource(antonie)
@@ -113,6 +114,7 @@ public class FHIRUebung7 {
              .setValue("040/678123"));
 
        //organization
+       Arztpraxis.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(Arztpraxis)
           .getRequest()
@@ -130,6 +132,14 @@ public class FHIRUebung7 {
        doctor.addIdentifier();
        //TODO: brauchen wir eine Organization (Arztpraxis) oder soll die Adresse + Telefon direkt an den Arzt?
 
+       //add to bundle
+       doctor.setId(IdType.newRandomUuid());
+       bundle.addEntry()
+          .setResource(doctor)
+          .getRequest()
+          .setUrl("Practitioner")
+          .setMethod(Bundle.HTTPVerb.POST);
+
        PractitionerRole doctorRole = new PractitionerRole();
        doctorRole.setPractitionerTarget(doctor).setPractitioner(new Reference(doctor));
        doctorRole.setOrganizationTarget(Arztpraxis).setOrganization(new Reference(Arztpraxis));
@@ -137,13 +147,7 @@ public class FHIRUebung7 {
           "A qualified/registered medical practitioner")));
 
        //add to bundle
-       bundle.addEntry()
-          .setResource(doctor)
-          .getRequest()
-          .setUrl("Practitioner")
-          .setMethod(Bundle.HTTPVerb.POST);
-
-       //add to bundle
+       doctorRole.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(doctorRole)
           .getRequest()
@@ -153,6 +157,7 @@ public class FHIRUebung7 {
       //Appointents
        Appointment vaccineAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       vaccineAppointment.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(vaccineAppointment)
           .getRequest()
@@ -161,6 +166,7 @@ public class FHIRUebung7 {
 
        Appointment covidAntiGenAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       covidAntiGenAppointment.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(covidAntiGenAppointment)
           .getRequest()
@@ -169,6 +175,7 @@ public class FHIRUebung7 {
 
        Appointment roetelnAntiGenAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       roetelnAntiGenAppointment.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(roetelnAntiGenAppointment)
           .getRequest()
@@ -192,6 +199,7 @@ public class FHIRUebung7 {
          .addAppointment(new Reference(vaccineAppointment));
 
        //add to bundle
+       vaccineEncounter.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(vaccineEncounter)
           .getRequest()
@@ -216,6 +224,7 @@ public class FHIRUebung7 {
        .addAppointment(new Reference(roetelnAntiGenAppointment));
 
        //add to bundle
+       roetelnEncounter.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(roetelnEncounter)
           .getRequest()
@@ -239,6 +248,7 @@ public class FHIRUebung7 {
        .addAppointment(new Reference(covidAntiGenAppointment));
 
        //add to bundle
+       covidEncounter.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(covidEncounter)
           .getRequest()
@@ -258,6 +268,7 @@ public class FHIRUebung7 {
           //.setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
 
        //add to bundle
+       Impfung.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(Impfung)
           .getRequest()
@@ -283,6 +294,7 @@ public class FHIRUebung7 {
           .setEncounter(new Reference(roetelnEncounter));
 
        //add to bundle
+       immunizationTestRoeteln.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(immunizationTestRoeteln)
           .getRequest()
@@ -309,6 +321,7 @@ public class FHIRUebung7 {
           .setEncounter(new Reference(covidEncounter));
 
        //add to bundle
+       immunizationTestCovid.setId(IdType.newRandomUuid());
        bundle.addEntry()
           .setResource(immunizationTestCovid)
           .getRequest()
