@@ -133,12 +133,26 @@ public class FHIRUebung7 {
        doctorRole.setId(doctorRoleOutcome.getId());
 
       //Appointents
-       Appointment vaccineAppointment = new Appointment()
+       Appointment vaccine1Appointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
-       vaccineAppointment.setId(IdType.newRandomUuid());
-       MethodOutcome vaccineAppointmentOutcome = client.create().resource(vaccineAppointment).prettyPrint().encodedJson().execute();
-       System.out.println("Appointment Impfung with ID: " + vaccineAppointmentOutcome.getId());
-       vaccineAppointment.setId(vaccineAppointmentOutcome.getId());
+       vaccine1Appointment.setId(IdType.newRandomUuid());
+       MethodOutcome vaccine1AppointmentOutcome = client.create().resource(vaccine1Appointment).prettyPrint().encodedJson().execute();
+       System.out.println("Appointment Impfung with ID: " + vaccine1AppointmentOutcome.getId());
+       vaccine1Appointment.setId(vaccine1AppointmentOutcome.getId());
+
+       Appointment vaccine2Appointment = new Appointment()
+          .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       vaccine2Appointment.setId(IdType.newRandomUuid());
+       MethodOutcome vaccine2AppointmentOutcome = client.create().resource(vaccine2Appointment).prettyPrint().encodedJson().execute();
+       System.out.println("Appointment Impfung with ID: " + vaccine2AppointmentOutcome.getId());
+       vaccine2Appointment.setId(vaccine2AppointmentOutcome.getId());
+
+       Appointment vaccine3Appointment = new Appointment()
+          .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       vaccine3Appointment.setId(IdType.newRandomUuid());
+       MethodOutcome vaccine3AppointmentOutcome = client.create().resource(vaccine3Appointment).prettyPrint().encodedJson().execute();
+       System.out.println("Appointment Impfung with ID: " + vaccine3AppointmentOutcome.getId());
+       vaccine3Appointment.setId(vaccine3AppointmentOutcome.getId());
 
        Appointment covidAntiGenAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
@@ -154,8 +168,8 @@ public class FHIRUebung7 {
        System.out.println("Appointment Roeteln AntiGen with ID: " + roetelnAntiGenAppointmentOutcome.getId());
        roetelnAntiGenAppointment.setId(roetelnAntiGenAppointmentOutcome.getId());
 
-       //Encounter - Impfung
-       Encounter vaccineEncounter = new Encounter()
+       //Encounter - Impfung1
+       Encounter vaccine1Encounter = new Encounter()
          .setStatus(Encounter.EncounterStatus.FINISHED)
          .setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
           "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
@@ -168,12 +182,51 @@ public class FHIRUebung7 {
                 new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
              ).setText("Immunization")
          )
-         .addAppointment(new Reference(vaccineAppointment.getIdElement().getValue()));
+         .addAppointment(new Reference(vaccine1Appointment.getIdElement().getValue()));
 
-       MethodOutcome vaccineEncounterOutcome = client.create().resource(vaccineEncounter).prettyPrint().encodedJson().execute();
+       MethodOutcome vaccineEncounterOutcome = client.create().resource(vaccine1Encounter).prettyPrint().encodedJson().execute();
        System.out.println("Encounter Impfung with ID: " + vaccineEncounterOutcome.getId());
-       vaccineEncounter.setId(vaccineEncounterOutcome.getId());
+       vaccine1Encounter.setId(vaccineEncounterOutcome.getId());
 
+       //Encounter - Impfung2
+       Encounter vaccine2Encounter = new Encounter()
+          .setStatus(Encounter.EncounterStatus.FINISHED)
+          .setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
+             "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
+          .setServiceType(
+             new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
+          .setSubject(new Reference(antonie.getIdElement().getValue()))
+          .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor.getIdElement().getValue())))
+          .addReasonCode(
+             new CodeableConcept(
+                new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
+             ).setText("Immunization")
+          )
+          .addAppointment(new Reference(vaccine2Appointment.getIdElement().getValue()));
+
+       MethodOutcome vaccine2EncounterOutcome = client.create().resource(vaccine2Encounter).prettyPrint().encodedJson().execute();
+       System.out.println("Encounter Impfung with ID: " + vaccine2EncounterOutcome.getId());
+       vaccine2Encounter.setId(vaccine2EncounterOutcome.getId());
+
+       //Encounter - Impfung3
+       Encounter vaccine3Encounter = new Encounter()
+          .setStatus(Encounter.EncounterStatus.FINISHED)
+          .setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
+             "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
+          .setServiceType(
+             new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
+          .setSubject(new Reference(antonie.getIdElement().getValue()))
+          .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor.getIdElement().getValue())))
+          .addReasonCode(
+             new CodeableConcept(
+                new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
+             ).setText("Immunization")
+          )
+          .addAppointment(new Reference(vaccine3Appointment.getIdElement().getValue()));
+
+       MethodOutcome vaccine3EncounterOutcome = client.create().resource(vaccine3Encounter).prettyPrint().encodedJson().execute();
+       System.out.println("Encounter Impfung with ID: " + vaccine3EncounterOutcome.getId());
+       vaccine3Encounter.setId(vaccine3EncounterOutcome.getId());
 
        //Encounter - Anti-Körper Röteln
        Encounter roetelnEncounter = new Encounter()
@@ -215,8 +268,8 @@ public class FHIRUebung7 {
        System.out.println("Encounter COVID with ID: " + covidEncounterOutcome.getId());
        covidEncounter.setId(covidEncounterOutcome.getId());
 
-       // Impfung
-       Immunization Impfung = new Immunization()
+       // Impfung1
+       Immunization Impfung1 = new Immunization()
           .setPatient(new Reference(antonie.getIdElement().getValue()))
           .setVaccineCode(new CodeableConcept()
              .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
@@ -224,12 +277,44 @@ public class FHIRUebung7 {
           .setLotNumber("123987")
           .setOccurrence(new DateTimeType(new GregorianCalendar(1895, Calendar.OCTOBER, 9)))
           .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor.getIdElement().getValue()))))
-          .setEncounter(new Reference(vaccineEncounter.getIdElement().getValue()));
+          .setEncounter(new Reference(vaccine1Encounter.getIdElement().getValue()));
           //.setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
 
-       MethodOutcome impfungOutcome = client.create().resource(Impfung).prettyPrint().encodedJson().execute();
-       System.out.println("Immunization Impfung with ID: " + impfungOutcome.getId());
-       Impfung.setId(impfungOutcome.getId());
+       MethodOutcome impfung1Outcome = client.create().resource(Impfung1).prettyPrint().encodedJson().execute();
+       System.out.println("Immunization Impfung with ID: " + impfung1Outcome.getId());
+       Impfung1.setId(impfung1Outcome.getId());
+
+       // Impfung2
+       Immunization Impfung2 = new Immunization()
+          .setPatient(new Reference(antonie.getIdElement().getValue()))
+          .setVaccineCode(new CodeableConcept()
+             .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "07", "mumps")))
+          )
+          .setLotNumber("123987")
+          .setOccurrence(new DateTimeType(new GregorianCalendar(1895, Calendar.OCTOBER, 9)))
+          .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor.getIdElement().getValue()))))
+          .setEncounter(new Reference(vaccine2Encounter.getIdElement().getValue()));
+       //.setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
+
+       MethodOutcome impfung2Outcome = client.create().resource(Impfung2).prettyPrint().encodedJson().execute();
+       System.out.println("Immunization Impfung with ID: " + impfung2Outcome.getId());
+       Impfung2.setId(impfung2Outcome.getId());
+
+       // Impfung3
+       Immunization Impfung3 = new Immunization()
+          .setPatient(new Reference(antonie.getIdElement().getValue()))
+          .setVaccineCode(new CodeableConcept()
+             .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "67", "malaria")))
+          )
+          .setLotNumber("123987")
+          .setOccurrence(new DateTimeType(new GregorianCalendar(1895, Calendar.OCTOBER, 9)))
+          .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor.getIdElement().getValue()))))
+          .setEncounter(new Reference(vaccine3Encounter.getIdElement().getValue()));
+       //.setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
+
+       MethodOutcome impfung3Outcome = client.create().resource(Impfung3).prettyPrint().encodedJson().execute();
+       System.out.println("Immunization Impfung with ID: " + impfung3Outcome.getId());
+       Impfung3.setId(impfung2Outcome.getId());
 
        //Anti-Körper-Test - Röteln
        Observation immunizationTestRoeteln = new Observation()
