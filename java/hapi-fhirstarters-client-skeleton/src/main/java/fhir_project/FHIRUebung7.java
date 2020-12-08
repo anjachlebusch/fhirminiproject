@@ -17,10 +17,6 @@ public class FHIRUebung7 {
         FhirContext ctx = FhirContext.forR4();
         IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
 
-       // Create a bundle that will be used as a transaction
-       Bundle bundle = new Bundle();
-       bundle.setType(Bundle.BundleType.TRANSACTION);
-
        // Create a patient
        // Version from Hannes
        // Empty Patient Instance
@@ -61,13 +57,9 @@ public class FHIRUebung7 {
        antonie.addExtension().setUrl("http://acme.org/fhir/StructureDefinition/passport-number")
         .setValue(new StringType("12345ABC"));
 
-       antonie.setId(IdType.newRandomUuid());
-       //add patient to bundle
-       bundle.addEntry()
-          .setResource(antonie)
-          .getRequest()
-          .setUrl("Patient")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome patientOutcome = client.create().resource(antonie).prettyPrint().encodedJson().execute();
+       System.out.println("Patient with ID: " + patientOutcome.getId());
+       antonie.setId(patientOutcome.getId());
 
        //Riskfactors for immunization
        //TODO: brauchen wir Risikofaktoren?
@@ -93,12 +85,9 @@ public class FHIRUebung7 {
              new Coding("http://snomed.info/sct", "165747007", "RhD positive (finding)")))
           );
 
-       //add to bundle
-       bundle.addEntry()
-          .setResource(bloodType)
-          .getRequest()
-          .setUrl("Observation")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome bloodTypeOutcome = client.create().resource(bloodType).prettyPrint().encodedJson().execute();
+       System.out.println("Observation Blood Type with ID: " + bloodTypeOutcome.getId());
+       bloodType.setId(bloodTypeOutcome.getId());
 
        //Arztpraxis
        Organization Arztpraxis = new Organization()
@@ -114,12 +103,9 @@ public class FHIRUebung7 {
              .setValue("040/678123"));
 
        //organization
-       Arztpraxis.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(Arztpraxis)
-          .getRequest()
-          .setUrl("Organization")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome arztpraxisOutcome = client.create().resource(Arztpraxis).prettyPrint().encodedJson().execute();
+       System.out.println("Organization Arztpraxis with ID: " + arztpraxisOutcome.getId());
+       Arztpraxis.setId(arztpraxisOutcome.getId());
 
        //Arzt
        Practitioner doctor= new Practitioner();
@@ -132,13 +118,9 @@ public class FHIRUebung7 {
        doctor.addIdentifier();
        //TODO: brauchen wir eine Organization (Arztpraxis) oder soll die Adresse + Telefon direkt an den Arzt?
 
-       //add to bundle
-       doctor.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(doctor)
-          .getRequest()
-          .setUrl("Practitioner")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome arztOutcome = client.create().resource(doctor).prettyPrint().encodedJson().execute();
+       System.out.println("Practitioner Arzt with ID: " + arztOutcome.getId());
+       doctor.setId(arztOutcome.getId());
 
        PractitionerRole doctorRole = new PractitionerRole();
        doctorRole.setPractitionerTarget(doctor).setPractitioner(new Reference(doctor.getIdElement().getValue()));
@@ -146,41 +128,31 @@ public class FHIRUebung7 {
        doctorRole.addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
           "A qualified/registered medical practitioner")));
 
-       //add to bundle
-       doctorRole.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(doctorRole)
-          .getRequest()
-          .setUrl("PractitionerRole")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome doctorRoleOutcome = client.create().resource(doctorRole).prettyPrint().encodedJson().execute();
+       System.out.println("Practitioner Role Arzt with ID: " + doctorRoleOutcome.getId());
+       doctorRole.setId(doctorRoleOutcome.getId());
 
       //Appointents
        Appointment vaccineAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
        vaccineAppointment.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(vaccineAppointment)
-          .getRequest()
-          .setUrl("Appointment")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome vaccineAppointmentOutcome = client.create().resource(vaccineAppointment).prettyPrint().encodedJson().execute();
+       System.out.println("Appointment Impfung with ID: " + vaccineAppointmentOutcome.getId());
+       vaccineAppointment.setId(vaccineAppointmentOutcome.getId());
 
        Appointment covidAntiGenAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
        covidAntiGenAppointment.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(covidAntiGenAppointment)
-          .getRequest()
-          .setUrl("Appointment")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome covidAntiGenAppointmentOutcome = client.create().resource(covidAntiGenAppointment).prettyPrint().encodedJson().execute();
+       System.out.println("Appointment COVID AntiGen with ID: " + covidAntiGenAppointmentOutcome.getId());
+       covidAntiGenAppointment.setId(covidAntiGenAppointmentOutcome.getId());
 
        Appointment roetelnAntiGenAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
        roetelnAntiGenAppointment.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(roetelnAntiGenAppointment)
-          .getRequest()
-          .setUrl("Appointment")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome roetelnAntiGenAppointmentOutcome = client.create().resource(roetelnAntiGenAppointment).prettyPrint().encodedJson().execute();
+       System.out.println("Appointment Roeteln AntiGen with ID: " + roetelnAntiGenAppointmentOutcome.getId());
+       roetelnAntiGenAppointment.setId(roetelnAntiGenAppointmentOutcome.getId());
 
        //Encounter - Impfung
        Encounter vaccineEncounter = new Encounter()
@@ -198,13 +170,9 @@ public class FHIRUebung7 {
          )
          .addAppointment(new Reference(vaccineAppointment.getIdElement().getValue()));
 
-       //add to bundle
-       vaccineEncounter.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(vaccineEncounter)
-          .getRequest()
-          .setUrl("Encounter")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome vaccineEncounterOutcome = client.create().resource(vaccineEncounter).prettyPrint().encodedJson().execute();
+       System.out.println("Encounter Impfung with ID: " + vaccineEncounterOutcome.getId());
+       vaccineEncounter.setId(vaccineEncounterOutcome.getId());
 
 
        //Encounter - Anti-Körper Röteln
@@ -223,13 +191,9 @@ public class FHIRUebung7 {
        )
        .addAppointment(new Reference(roetelnAntiGenAppointment.getIdElement().getValue()));
 
-       //add to bundle
-       roetelnEncounter.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(roetelnEncounter)
-          .getRequest()
-          .setUrl("Encounter")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome roetelnEncounterOutcome = client.create().resource(roetelnEncounter).prettyPrint().encodedJson().execute();
+       System.out.println("Encounter Roeteln with ID: " + roetelnEncounterOutcome.getId());
+       roetelnEncounter.setId(roetelnEncounterOutcome.getId());
 
        //Encounter - Anti-Körper COVID
        Encounter covidEncounter = new Encounter()
@@ -247,13 +211,9 @@ public class FHIRUebung7 {
        )
        .addAppointment(new Reference(covidAntiGenAppointment.getIdElement().getValue()));
 
-       //add to bundle
-       covidEncounter.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(covidEncounter)
-          .getRequest()
-          .setUrl("Encounter")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome covidEncounterOutcome = client.create().resource(covidEncounter).prettyPrint().encodedJson().execute();
+       System.out.println("Encounter COVID with ID: " + covidEncounterOutcome.getId());
+       covidEncounter.setId(covidEncounterOutcome.getId());
 
        // Impfung
        Immunization Impfung = new Immunization()
@@ -267,13 +227,9 @@ public class FHIRUebung7 {
           .setEncounter(new Reference(vaccineEncounter.getIdElement().getValue()));
           //.setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
 
-       //add to bundle
-       Impfung.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(Impfung)
-          .getRequest()
-          .setUrl("Immunization")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome impfungOutcome = client.create().resource(Impfung).prettyPrint().encodedJson().execute();
+       System.out.println("Immunization Impfung with ID: " + impfungOutcome.getId());
+       Impfung.setId(impfungOutcome.getId());
 
        //Anti-Körper-Test - Röteln
        Observation immunizationTestRoeteln = new Observation()
@@ -293,13 +249,9 @@ public class FHIRUebung7 {
           ).setText("Schutz nicht vorhanden"))
           .setEncounter(new Reference(roetelnEncounter.getIdElement().getValue()));
 
-       //add to bundle
-       immunizationTestRoeteln.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(immunizationTestRoeteln)
-          .getRequest()
-          .setUrl("Observation")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome immunizationTestRoetelnOutcome = client.create().resource(immunizationTestRoeteln).prettyPrint().encodedJson().execute();
+       System.out.println("Observation roeteln Test with ID: " + immunizationTestRoetelnOutcome.getId());
+       immunizationTestRoeteln.setId(immunizationTestRoetelnOutcome.getId());
 
 
        //Anti-Körper-Test - COVID
@@ -320,17 +272,11 @@ public class FHIRUebung7 {
           ).setText("Schutz vorhanden"))
           .setEncounter(new Reference(covidEncounter.getIdElement().getValue()));
 
-       //add to bundle
-       immunizationTestCovid.setId(IdType.newRandomUuid());
-       bundle.addEntry()
-          .setResource(immunizationTestCovid)
-          .getRequest()
-          .setUrl("Observation")
-          .setMethod(Bundle.HTTPVerb.POST);
+       MethodOutcome immunizationTestCovidOutcome = client.create().resource(immunizationTestCovid).prettyPrint().encodedJson().execute();
+       System.out.println("Observation COVID Test with ID: " + immunizationTestCovidOutcome.getId());
+       immunizationTestCovid.setId(immunizationTestCovidOutcome.getId());
 
-       //Upload bundle to server
-       Bundle bundleOutcome = client.transaction().withBundle(bundle).prettyPrint().encodedJson().execute();
-       System.out.println(bundleOutcome);
+       //TODO: müssen wir das im Bundle machen?
     }
     //TODO: wie viele Antikörper-Tests / Impfungen
 
