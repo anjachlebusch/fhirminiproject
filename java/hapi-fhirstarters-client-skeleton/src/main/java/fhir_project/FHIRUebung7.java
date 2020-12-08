@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.codesystems.ObservationCategory;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +16,10 @@ public class FHIRUebung7 {
         // Create a client
         FhirContext ctx = FhirContext.forR4();
         IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
+
+       // Create a bundle that will be used as a transaction
+       Bundle bundle = new Bundle();
+       bundle.setType(Bundle.BundleType.TRANSACTION);
 
        // Create a patient
        // Version from Hannes
@@ -56,8 +61,15 @@ public class FHIRUebung7 {
        antonie.addExtension().setUrl("http://acme.org/fhir/StructureDefinition/passport-number")
         .setValue(new StringType("12345ABC"));
 
+       //add patient to bundle
+       bundle.addEntry()
+          .setResource(antonie)
+          .getRequest()
+          .setUrl("Patient")
+          .setMethod(Bundle.HTTPVerb.POST);
+
        //Riskfactors for immunization
-       //TODO: do we need this???
+       //TODO: brauchen wir Risikofaktoren?
        RiskAssessment risikoFaktoren = new RiskAssessment();
 
        //Blood type
@@ -80,20 +92,12 @@ public class FHIRUebung7 {
              new Coding("http://snomed.info/sct", "165747007", "RhD positive (finding)")))
           );
 
-
-       // Impfung
-       Immunization Impfung = new Immunization();
-       Impfung.setPatient(new Reference(antonie))
-          .setVaccineCode(new CodeableConcept()
-             .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
-          )
-          .setLotNumber("123987")
-          .setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
-          .setOccurrence(new GregorianCalendar(1895, Calendar.OCTOBER, 9))
-          .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(/*TODO: hier Arzt referenzieren*/)))
-          //TODO: add Encounter
-          .setEncounter();
-
+       //add to bundle
+       bundle.addEntry()
+          .setResource(bloodType)
+          .getRequest()
+          .setUrl("Observation")
+          .setMethod(Bundle.HTTPVerb.POST);
 
        //Arztpraxis
        Organization Arztpraxis = new Organization()
@@ -107,6 +111,13 @@ public class FHIRUebung7 {
           .addTelecom(new ContactPoint()
              .setSystem(ContactPoint.ContactPointSystem.PHONE)
              .setValue("040/678123"));
+
+       //organization
+       bundle.addEntry()
+          .setResource(Arztpraxis)
+          .getRequest()
+          .setUrl("Organization")
+          .setMethod(Bundle.HTTPVerb.POST);
 
        //Arzt
        Practitioner doctor= new Practitioner();
@@ -125,146 +136,191 @@ public class FHIRUebung7 {
        doctorRole.addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
           "A qualified/registered medical practitioner")));
 
-      //Appointent
-       Appointment appointment = new Appointment()
+       //add to bundle
+       bundle.addEntry()
+          .setResource(doctor)
+          .getRequest()
+          .setUrl("Practitioner")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+       //add to bundle
+       bundle.addEntry()
+          .setResource(doctorRole)
+          .getRequest()
+          .setUrl("PractitionerRole")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+      //Appointents
+       Appointment vaccineAppointment = new Appointment()
           .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       bundle.addEntry()
+          .setResource(vaccineAppointment)
+          .getRequest()
+          .setUrl("Appointment")
+          .setMethod(Bundle.HTTPVerb.POST);
 
-       //Encounter
-       Encounter vaccineEncounter = new Encounter();
-       vaccineEncounter.setStatus(Encounter.EncounterStatus.FINISHED);
-       vaccineEncounter.setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
-          "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."));
-       vaccineEncounter.setServiceType(
-          new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")));
-       vaccineEncounter.setSubjectTarget(antonie).setSubject(new Reference(antonie));
-       vaccineEncounter.addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)));
-       vaccineEncounter.addReasonCode(
-          /*TODO: look at server which reasoncode makes sense*/
-          new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/encounter-reason", "148477008", "Immunization not offered")));
-       vaccineEncounter.addAppointment(new Reference(appointment));
+       Appointment covidAntiGenAppointment = new Appointment()
+          .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       bundle.addEntry()
+          .setResource(covidAntiGenAppointment)
+          .getRequest()
+          .setUrl("Appointment")
+          .setMethod(Bundle.HTTPVerb.POST);
 
-       //Anti-Körper-Test
-       Observation immunizationTest = new Observation()
-          .addBasedOn(/*TODO: add Encounter here*/);
+       Appointment roetelnAntiGenAppointment = new Appointment()
+          .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
+       bundle.addEntry()
+          .setResource(roetelnAntiGenAppointment)
+          .getRequest()
+          .setUrl("Appointment")
+          .setMethod(Bundle.HTTPVerb.POST);
 
+       //Encounter - Impfung
+       Encounter vaccineEncounter = new Encounter()
+         .setStatus(Encounter.EncounterStatus.FINISHED)
+         .setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
+          "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
+         .setServiceType(
+          new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
+         .setSubjectTarget(antonie).setSubject(new Reference(antonie))
+         .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)))
+         .addReasonCode(
+             new CodeableConcept(
+                new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
+             ).setText("Immunization")
+         )
+         .addAppointment(new Reference(vaccineAppointment));
+
+       //add to bundle
+       bundle.addEntry()
+          .setResource(vaccineEncounter)
+          .getRequest()
+          .setUrl("Encounter")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+
+       //Encounter - Anti-Körper Röteln
+       Encounter roetelnEncounter = new Encounter()
+       .setStatus(Encounter.EncounterStatus.FINISHED)
+       .setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
+          "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
+       .setServiceType(
+          new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
+       .setSubjectTarget(antonie).setSubject(new Reference(antonie))
+       .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)))
+       .addReasonCode(
+          new CodeableConcept(
+             new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
+          ).setText("anti-gen test")
+       )
+       .addAppointment(new Reference(roetelnAntiGenAppointment));
+
+       //add to bundle
+       bundle.addEntry()
+          .setResource(roetelnEncounter)
+          .getRequest()
+          .setUrl("Encounter")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+       //Encounter - Anti-Körper COVID
+       Encounter covidEncounter = new Encounter()
+       .setStatus(Encounter.EncounterStatus.FINISHED)
+       .setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
+          "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
+       .setServiceType(
+          new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
+       .setSubjectTarget(antonie).setSubject(new Reference(antonie))
+       .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)))
+       .addReasonCode(
+          new CodeableConcept(
+             new Coding("http://snomed.info/sct", "185346005", "Encounter for sign (procedure)")
+          ).setText("anti-gen test")
+       )
+       .addAppointment(new Reference(covidAntiGenAppointment));
+
+       //add to bundle
+       bundle.addEntry()
+          .setResource(covidEncounter)
+          .getRequest()
+          .setUrl("Encounter")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+       // Impfung
+       Immunization Impfung = new Immunization()
+          .setPatient(new Reference(antonie))
+          .setVaccineCode(new CodeableConcept()
+             .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
+          )
+          .setLotNumber("123987")
+          .setOccurrence(new DateTimeType(new GregorianCalendar(1895, Calendar.OCTOBER, 9)))
+          .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor))))
+          .setEncounter(new Reference(vaccineEncounter));
+          //.setManufacturer(/*TODO: manufacturer oder Name der Impfung?*/)
+
+       //add to bundle
+       bundle.addEntry()
+          .setResource(Impfung)
+          .getRequest()
+          .setUrl("Immunization")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+       //Anti-Körper-Test - Röteln
+       Observation immunizationTestRoeteln = new Observation()
+          .addCategory(
+             new CodeableConcept(
+                new Coding("http://terminology.hl7.org/CodeSystem/observation-category", ObservationCategory.LABORATORY.toCode(), ObservationCategory.LABORATORY.getDisplay())
+             ))
+          .setCode(
+             new CodeableConcept(
+                new Coding("http://loinc.org", "74415-1","display: Rubella virus IgG Ab [Presence] in Body fluid by Immunoassay")
+             )
+          )
+          .setSubject(new Reference(antonie))
+          .addPerformer(new Reference(doctor))
+          .setValue(new CodeableConcept(
+             new Coding("http://snomed.info/sct", "260385009", "Negative (qualifier value)")
+          ).setText("Schutz nicht vorhanden"))
+          .setEncounter(new Reference(roetelnEncounter));
+
+       //add to bundle
+       bundle.addEntry()
+          .setResource(immunizationTestRoeteln)
+          .getRequest()
+          .setUrl("Observation")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+
+       //Anti-Körper-Test - COVID
+       Observation immunizationTestCovid = new Observation()
+          .addCategory(
+             new CodeableConcept(
+                new Coding("http://terminology.hl7.org/CodeSystem/observation-category", ObservationCategory.LABORATORY.toCode(), ObservationCategory.LABORATORY.getDisplay())
+             ))
+          .setCode(
+             new CodeableConcept(
+                new Coding("http://loinc.org", "95209-3", "SARS-CoV+SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay")
+             )
+          )
+          .setSubject(new Reference(antonie))
+          .addPerformer(new Reference(doctor))
+          .setValue(new CodeableConcept(
+             new Coding("http://snomed.info/sct", "10828004", "Positive (qualifier value)")
+          ).setText("Schutz vorhanden"))
+          .setEncounter(new Reference(covidEncounter));
+
+       //add to bundle
+       bundle.addEntry()
+          .setResource(immunizationTestCovid)
+          .getRequest()
+          .setUrl("Observation")
+          .setMethod(Bundle.HTTPVerb.POST);
+
+       //Upload bundle to server
+       Bundle bundleOutcome = client.transaction().withBundle(bundle).prettyPrint().encodedJson().execute();
+       System.out.println(bundleOutcome);
     }
+    //TODO: wie viele Antikörper-Tests / Impfungen
 
 
 
-    /**
-     * helper for writing resource to Json-File
-     * @param ctx - FHIR Context
-     * @param resource - Resource to print in json
-     */
-    private static void exportToJsonFile(FhirContext ctx, DomainResource resource) {
-        try {
-            int value = new Random().nextInt();
-            FileWriter fileWriter = new FileWriter(value + ".json");
-            ctx.newJsonParser()
-                    .setPrettyPrint(true)
-                    .encodeResourceToWriter(resource, fileWriter);
-        } catch (IOException exception) {
-            System.out.println("An error occurred.");
-            exception.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Create an organization
-     * @param ctx fhir context
-     * @param client fhir client
-     * @param name name of the organization
-     */
-    public static Organization createOrganization(FhirContext ctx, IGenericClient client, String name) {
-        // Create an organization
-        Organization Arztpraxis = new Organization();
-
-        // add alias to organization
-        Arztpraxis.addAlias(name);
-
-        // Create the resource on the server
-        MethodOutcome outcome = client
-                .create()
-                .resource(Arztpraxis)
-                .execute();
-
-        // Log the ID that the server assigned
-        String id = outcome.getId().toString();
-        Organization createdOrganization = getOrganizationById(client, id);
-        exportToJsonFile(ctx, createdOrganization);
-        return createdOrganization;
-    }
-
-    /**
-     * gets organization by id
-     * @param client
-     * @param organizationId
-     * @return Organization object
-     */
-    private static Organization getOrganizationById(IGenericClient client, String organizationId) {
-        try {
-            return client.read().resource(Organization.class).withId(organizationId).execute();
-        } catch (ResourceNotFoundException e) {
-            System.out.println("Resource not found!");
-            return null;
-        }
-    }
-
-
-    /**
-     * Create Encounter
-     * @param ctx fhir context
-     * @param client fhir client
-     */
-    public static void createEncounter(FhirContext ctx, IGenericClient client) {
-        // Create an Encounter
-        Encounter encounter = new Encounter();
-
-        Coding snomedCodeEncounterForSign = new Coding()
-                .setCode("185346005")
-                .setSystem("SNOMED-CT");
-        ArrayList codeList = new ArrayList<Coding>();
-        codeList.add(snomedCodeEncounterForSign);
-        CodeableConcept reasonCode = new CodeableConcept()
-                .setCoding(codeList)
-                .setText("Immunization");
-        Appointment appointment = new Appointment()
-                .setStart(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
-
-        // add attributes to Encounter
-        ArrayList reasoncodeList = new ArrayList<CodeableConcept>();
-        reasoncodeList.add(reasonCode);
-        ArrayList referenceList = new ArrayList<Reference>();
-        referenceList.add(new Reference(appointment));
-        encounter.setStatus(Encounter.EncounterStatus.PLANNED)
-                .setReasonCode(reasoncodeList)
-                .setAppointment(referenceList);
-
-        // Create the resource on the server
-        MethodOutcome outcome = client
-                .create()
-                .resource(encounter)
-                .execute();
-
-        // Log the ID that the server assigned
-        String id = outcome.getId().toString();
-        Encounter createdEncounter = getEncounterById(client, id);
-        exportToJsonFile(ctx, createdEncounter);
-    }
-
-    /**
-     * gets encounter by id
-     * @param client
-     * @param encounterId
-     * @return Encounter object
-     */
-    private static Encounter getEncounterById(IGenericClient client, String encounterId) {
-        try {
-            return client.read().resource(Encounter.class).withId(encounterId).execute();
-        } catch (ResourceNotFoundException e) {
-            System.out.println("Resource not found!");
-            return null;
-        }
-    }
 }
