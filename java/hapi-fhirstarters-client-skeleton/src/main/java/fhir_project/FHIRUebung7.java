@@ -33,10 +33,12 @@ public class FHIRUebung7 {
        Appointment vaccine1Appointment = createAppointment(client, new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
        Appointment vaccine2Appointment = createAppointment(client, new GregorianCalendar(1842, Calendar.APRIL, 12).getTime());
        Appointment vaccine3Appointment = createAppointment(client, new GregorianCalendar(1835, Calendar.JUNE, 23).getTime());
+       Appointment vaccine4Appointment = createAppointment(client, new GregorianCalendar(1828, Calendar.JANUARY, 2).getTime());
+       Appointment vaccine5Appointment = createAppointment(client, new GregorianCalendar(1830, Calendar.SEPTEMBER, 25).getTime());
+       Appointment vaccine6Appointment = createAppointment(client, new GregorianCalendar(1852, Calendar.JULY, 12).getTime());
 
        Appointment covidAntiGenAppointment = createAppointment(client, new GregorianCalendar(1853, Calendar.SEPTEMBER, 5).getTime());
-
-       Appointment roetelnAntiGenAppointment = createAppointment(client, new GregorianCalendar(1823, Calendar.FEBRUARY, 15).getTime());
+       Appointment roetelnAntiGenAppointment = createAppointment(client, new GregorianCalendar(1828, Calendar.FEBRUARY, 15).getTime());
 
        //Encounter - Impfung1
        Encounter vaccine1Encounter = createVaccineEncounter(client, vaccine1Appointment, antonie, doctor);
@@ -47,6 +49,15 @@ public class FHIRUebung7 {
        //Encounter - Impfung3
        Encounter vaccine3Encounter = createVaccineEncounter(client, vaccine3Appointment, antonie, doctor);
 
+       //Encounter - Impfung4
+       Encounter vaccine4Encounter = createVaccineEncounter(client, vaccine4Appointment, antonie, doctor);
+
+       //Encounter - Impfung5
+       Encounter vaccine5Encounter = createVaccineEncounter(client, vaccine5Appointment, antonie, doctor);
+
+       //Encounter - Impfung6
+       Encounter vaccine6Encounter = createVaccineEncounter(client, vaccine6Appointment, antonie, doctor);
+
        //Encounter - Anti-Körper Röteln
        Encounter roetelnEncounter = createAntiGenTestEncounter(client, roetelnAntiGenAppointment, antonie, doctor);
 
@@ -55,20 +66,36 @@ public class FHIRUebung7 {
 
        // Impfung1
        CodeableConcept vaccineCode1 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")));
-       DateTimeType occurenceDate1 = new DateTimeType(new GregorianCalendar(1895, Calendar.OCTOBER, 9));
+       DateTimeType occurenceDate1 = new DateTimeType(new GregorianCalendar(1846, Calendar.OCTOBER, 1));
        Immunization vaccine1 = createImmunization(client, antonie, doctor, vaccine1Encounter, vaccineCode1, "123456", occurenceDate1);
 
        // Impfung2
-       CodeableConcept vaccineCode2 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "07", "mumps")));
-       DateTimeType occurenceDate2 = new DateTimeType(new GregorianCalendar(1845, Calendar.JUNE, 9));
+       CodeableConcept vaccineCode2 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "07", "mumps virus vaccine")));
+       DateTimeType occurenceDate2 = new DateTimeType(new GregorianCalendar(1842, Calendar.APRIL, 12));
        Immunization vaccine2 = createImmunization(client, antonie, doctor, vaccine2Encounter, vaccineCode2, "98765", occurenceDate2);
 
        // Impfung3
-       CodeableConcept vaccineCode3 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "67", "malaria")));
-       DateTimeType occurenceDate3 = new DateTimeType(new GregorianCalendar(1825, Calendar.FEBRUARY, 9));
+       CodeableConcept vaccineCode3 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "67", "malaria vaccine")));
+       DateTimeType occurenceDate3 = new DateTimeType(new GregorianCalendar(1835, Calendar.JUNE, 23));
        Immunization vaccine3 = createImmunization(client, antonie, doctor, vaccine3Encounter, vaccineCode3, "98765", occurenceDate3);
 
+       // Impfung4
+       CodeableConcept vaccineCode4 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "102", "DTP- Haemophilus influenzae type b conjugate and hepatitis b vaccine")));
+       DateTimeType occurenceDate4 = new DateTimeType(new GregorianCalendar(1828, Calendar.JANUARY, 2));
+       Immunization vaccine4 = createImmunization(client, antonie, doctor, vaccine4Encounter, vaccineCode4, "98765", occurenceDate4);
+
+       // Impfung5
+       CodeableConcept vaccineCode5 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "162", "meningococcal B vaccine, fully recombinant")));
+       DateTimeType occurenceDate5 = new DateTimeType(new GregorianCalendar(1930, Calendar.SEPTEMBER, 25));
+       Immunization vaccine5 = createImmunization(client, antonie, doctor, vaccine5Encounter, vaccineCode5, "243546", occurenceDate5);
+
+       // Impfung6
+       CodeableConcept vaccineCode6 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")));
+       DateTimeType occurenceDate6 = new DateTimeType(new GregorianCalendar(1852, Calendar.JULY, 12));
+       Immunization vaccine6 = createImmunization(client, antonie, doctor, vaccine6Encounter, vaccineCode6, "123456", occurenceDate6);
+
        //Anti-Körper-Test - Röteln
+       //TODO: Titer und Methode
        CodeableConcept roetelnTest = new CodeableConcept(new Coding("http://loinc.org", "74415-1","display: Rubella virus IgG Ab [Presence] in Body fluid by Immunoassay"));
        CodeableConcept roetelnResult = new CodeableConcept(
              new Coding("http://snomed.info/sct", "260385009", "Negative (qualifier value)")
