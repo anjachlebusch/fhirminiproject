@@ -1,6 +1,8 @@
 package fhir_project;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
+import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
@@ -13,6 +15,8 @@ import java.util.*;
 
 public class FHIRUebung7 {
     public static void main(String[] args) {
+
+
         // Create a client
         FhirContext ctx = FhirContext.forR4();
         IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
@@ -360,6 +364,10 @@ public class FHIRUebung7 {
        MethodOutcome immunizationTestCovidOutcome = client.create().resource(immunizationTestCovid).prettyPrint().encodedJson().execute();
        System.out.println("Observation COVID Test with ID: " + immunizationTestCovidOutcome.getId());
        immunizationTestCovid.setId(immunizationTestCovidOutcome.getId());
+
+
+
+
 
        //TODO: müssen wir das im Bundle machen?
     }
