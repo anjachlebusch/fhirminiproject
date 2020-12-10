@@ -1,6 +1,7 @@
 package fhir_project;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.*;
@@ -10,6 +11,7 @@ import java.util.*;
 
 public class FHIRUebung7 {
     public static void main(String[] args) {
+
         // Create a client
         FhirContext ctx = FhirContext.forR4();
         IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
@@ -20,6 +22,8 @@ public class FHIRUebung7 {
        //Blutgruppe
        Observation bloodType = createBloodTypeForPatient(client, antonie);
 
+
+
        //Arztpraxis
        Organization doctorsOffice = createDoctorsOffice(client);
 
@@ -28,6 +32,8 @@ public class FHIRUebung7 {
 
       //Arzt-Rolle
        PractitionerRole doctorRole = createDoctorRole(client, doctor, doctorsOffice);
+
+       Composition c =createComposition(client,ctx,antonie,doctor);
 
       //Appointents
        Appointment vaccine1Appointment = createAppointment(client, new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
@@ -323,6 +329,30 @@ public class FHIRUebung7 {
       System.out.println("ID of created Resource: " + outcome.getId());
       return outcome;
    }
+
+   private static Composition createComposition(IGenericClient client,FhirContext ctx,Patient patient, Practitioner performer) {
+      Composition comp = new Composition();
+      //comp.addSection().addEntry().setResource(new AllergyIntolerance().addNote(new Annotation().setText("Section0_Allergy0")));
+      comp.addSection().addEntry().setResource(new AllergyIntolerance().addNote(new Annotation().setText("Section1_Allergy0")));
+      comp.addSection().addEntry().setResource(patient);
+
+      IParser parser = ctx.newJsonParser().setPrettyPrint(true);
+
+      String string = parser.encodeResourceToString(comp);
+
+
+      Composition parsed = parser.parseResource(Composition.class, string);
+      parsed.getSection().remove(0);
+
+      string = parser.encodeResourceToString(parsed);
+
+
+      parsed = parser.parseResource(Composition.class, string);
+      MethodOutcome compOutcome = createResource(client, comp);
+      comp.setId(compOutcome.getId());
+      return comp;
+   }
+
 
 
 }
