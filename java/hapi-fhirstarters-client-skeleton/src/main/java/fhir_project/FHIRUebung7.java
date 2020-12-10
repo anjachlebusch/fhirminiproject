@@ -272,7 +272,7 @@ public class FHIRUebung7 {
          .setClass_(new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "AMB",
             "A comprehensive term for health care provided in a healthcare facility (e.g. a practitioneraTMs office, clinic setting, or hospital) on a nonresident basis. The term ambulatory usually implies that the patient has come to the location and is not assigned to a bed. Sometimes referred to as an outpatient encounter."))
          .setServiceType(
-            new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "57", "Immunization")))
+            new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/service-type", "162", "Pathology - Immunology")))
          .setSubject(new Reference(patient))
          .addParticipant(new Encounter.EncounterParticipantComponent().setIndividual(new Reference(doctor)))
          .addReasonCode(
