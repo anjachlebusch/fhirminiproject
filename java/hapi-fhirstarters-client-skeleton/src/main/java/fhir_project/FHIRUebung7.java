@@ -33,7 +33,7 @@ public class FHIRUebung7 {
       //Arzt-Rolle
        PractitionerRole doctorRole = createDoctorRole(client, doctor, doctorsOffice);
 
-       Composition c =createComposition(client,ctx,antonie,doctor);
+
 
       //Appointents
        Appointment vaccine1Appointment = createAppointment(client, new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime());
@@ -114,7 +114,9 @@ public class FHIRUebung7 {
              new Coding("http://snomed.info/sct", "10828004", "Positive (qualifier value)")
           ).setText("Schutz vorhanden");
        Observation immunizationTestCovid = createImmunizationTest(client, antonie, doctor, covidEncounter, covidTest, covidResult);
+       Composition c =createComposition(client,ctx,antonie,doctor,vaccine1);
     }
+
     //TODO: wie viele Antikörper-Tests / Impfungen
 
 
@@ -330,14 +332,13 @@ public class FHIRUebung7 {
       return outcome;
    }
 
-   private static Composition createComposition(IGenericClient client,FhirContext ctx,Patient patient, Practitioner performer) {
+   private static Composition createComposition(IGenericClient client,FhirContext ctx,Patient patient, Practitioner performer,Immunization I) {
       Composition comp = new Composition();
       //comp.addSection().addEntry().setResource(new AllergyIntolerance().addNote(new Annotation().setText("Section0_Allergy0")));
       comp.addSection().addEntry().setResource(new AllergyIntolerance().addNote(new Annotation().setText("Section1_Allergy0")));
       comp.addSection().addEntry().setResource(patient);
-
+      comp.addSection().addEntry().setResource(I);
       IParser parser = ctx.newJsonParser().setPrettyPrint(true);
-
       String string = parser.encodeResourceToString(comp);
 
 
