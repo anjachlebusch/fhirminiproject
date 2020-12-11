@@ -164,6 +164,8 @@ public class FHIRUebung7 {
       //Riskfactors for immunization
       //TODO: brauchen wir Risikofaktoren?
       RiskAssessment risikoFaktoren = new RiskAssessment();
+      risikoFaktoren.setMethod(new CodeableConcept().setCoding(Arrays.asList(new Coding("http ://loinc.org", "66678-4", "Diabetes [PhenX]"),
+         new Coding("http ://loinc.org", "11382-9", "Medication allergy - Reported"))));
 
       MethodOutcome patientOutcome = createResource(client, antonie);
       antonie.setId(patientOutcome.getId());
