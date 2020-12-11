@@ -34,7 +34,7 @@ public class FHIRUebung7 {
        Practitioner doctor = createDoctor(client);
 
       //Arzt-Rolle
-       PractitionerRole doctorRole = createDoctorRole(client, doctor, doctorsOffice);
+       //PractitionerRole doctorRole = createDoctorRole(client, doctor, doctorsOffice);
 
        // Impfung1
        CodeableConcept vaccineCode1 = new CodeableConcept()
@@ -122,9 +122,6 @@ public class FHIRUebung7 {
       cal.set(1827, 7, 6);
       antonie.setBirthDate(cal.getTime());
 
-      //Birthplace
-      antonie.addExtension().setUrl("http://hl7.org/fhir/StructureDefinition/patient-birthPlace")
-         .setValue(new StringType("Hamburg"));
 
       //Address
       antonie.addAddress(
@@ -135,8 +132,8 @@ public class FHIRUebung7 {
       );
 
       //Passport number
-      antonie.addExtension().setUrl("http://acme.org/fhir/StructureDefinition/passport-number")
-         .setValue(new StringType("12345ABC"));
+//      antonie.addExtension().setUrl("http://acme.org/fhir/StructureDefinition/passport-number")
+//         .setValue(new StringType("12345ABC"));
 
       //Riskfactors for immunization
       //TODO: brauchen wir Risikofaktoren?
@@ -161,7 +158,7 @@ public class FHIRUebung7 {
          )
          .setCode(
             new CodeableConcept().setCoding(
-               Collections.singletonList(new Coding("http ://loinc.org", "882-1", "ABO and Rh group [Type] in Blood"))
+               Collections.singletonList(new Coding("http://loinc.org", "882-1", "ABO and Rh group [Type] in Blood"))
             )
          )
          .setSubject(new Reference(patient))
@@ -170,7 +167,7 @@ public class FHIRUebung7 {
             Arrays.asList(new Coding("http://snomed.info/sct", "112144000", "Blood group A (finding)"),
                new Coding("http://snomed.info/sct", "165747007", "RhD positive (finding)")))
          );
-      MethodOutcome bloodTypeOutcome = createResource(client, patient);
+      MethodOutcome bloodTypeOutcome = createResource(client, bloodType);
       bloodType.setId(bloodTypeOutcome.getId());
       return bloodType;
    }
@@ -186,7 +183,8 @@ public class FHIRUebung7 {
          )
          .addTelecom(new ContactPoint()
             .setSystem(ContactPoint.ContactPointSystem.PHONE)
-            .setValue("040/678123"));
+            .setValue("040/678123"))
+         .addIdentifier(new Identifier().setValue(Integer.toString(new Random().nextInt())));
 
       MethodOutcome arztpraxisOutcome = createResource(client, doctorsOffice);
       doctorsOffice.setId(arztpraxisOutcome.getId());
@@ -205,16 +203,16 @@ public class FHIRUebung7 {
       return doctor;
    }
 
-   private static PractitionerRole createDoctorRole(IGenericClient client, Practitioner doctor, Organization doctorsOffice) {
-      PractitionerRole doctorRole = new PractitionerRole()
-         .setPractitionerTarget(doctor).setPractitioner(new Reference(doctor))
-         .setOrganizationTarget(doctorsOffice).setOrganization(new Reference(doctorsOffice))
-         .addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
-         "A qualified/registered medical practitioner")));
-      MethodOutcome doctorRoleOutcome = createResource(client, doctorRole);
-      doctorRole.setId(doctorRoleOutcome.getId());
-      return doctorRole;
-   }
+//   private static PractitionerRole createDoctorRole(IGenericClient client, Practitioner doctor, Organization doctorsOffice) {
+//      PractitionerRole doctorRole = new PractitionerRole()
+//         .setPractitionerTarget(doctor).setPractitioner(new Reference(doctor))
+//         .setOrganizationTarget(doctorsOffice).setOrganization(new Reference(doctorsOffice))
+//         .addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
+//         "A qualified/registered medical practitioner")));
+//      MethodOutcome doctorRoleOutcome = createResource(client, doctorRole);
+//      doctorRole.setId(doctorRoleOutcome.getId());
+//      return doctorRole;
+//   }
 
    private static Immunization createImmunization(IGenericClient client, Patient patient, Practitioner doctor,
                                                   CodeableConcept vaccineCode, String lotNumber, DateTimeType occurence) {
@@ -223,7 +221,8 @@ public class FHIRUebung7 {
          .setVaccineCode(vaccineCode)
          .setLotNumber(lotNumber)
          .setOccurrence(occurence)
-         .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor))));
+         .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor))))
+         .setStatus(Immunization.ImmunizationStatus.COMPLETED);
 
       MethodOutcome vaccineOutcome = createResource(client, vaccine);
       vaccine.setId(vaccineOutcome.getId());
@@ -240,7 +239,8 @@ public class FHIRUebung7 {
             ))
          .setCode(testType)
          .setSubject(new Reference(patient))
-         .addPerformer(new Reference(performer));
+         .addPerformer(new Reference(performer))
+         .setStatus(Observation.ObservationStatus.FINAL);
          if(testResult != null) {
             immunizationTest.setValue(testResult);
          } else if(quantitativeResult != null) {
@@ -303,11 +303,11 @@ public class FHIRUebung7 {
       }
       comp.addSection(antibodyTestSection);
 
-      Composition.SectionComponent riskfactorSection =
-         new Composition.SectionComponent()
-            .setTitle("Risikofaktoren bei Impfungen");
-      //TODO: add Risikofaktoren
-      comp.addSection(riskfactorSection);
+//      Composition.SectionComponent riskfactorSection =
+//         new Composition.SectionComponent()
+//            .setTitle("Risikofaktoren bei Impfungen");
+//      //TODO: add Risikofaktoren
+//      comp.addSection(riskfactorSection);
 
       Composition.SectionComponent bloodgroupSection =
          new Composition.SectionComponent()
