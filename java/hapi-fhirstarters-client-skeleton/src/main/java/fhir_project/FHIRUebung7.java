@@ -156,7 +156,7 @@ public class FHIRUebung7 {
 
        //Composition
        Composition c = createComposition(client, ctx, comp, antonie, doctor, riskfactor, Arrays.asList(vaccine1, vaccine2, vaccine3,
-          vaccine4, vaccine5, vaccine6), Arrays.asList(immunizationTestCovid, immunizationTestRoeteln), bloodType );
+          vaccine4, vaccine5, vaccine6), immunizationTestCovid, immunizationTestRoeteln, bloodType );
     }
 
 
@@ -337,8 +337,11 @@ public class FHIRUebung7 {
       return outcome;
    }
 
-   private static Composition createComposition(IGenericClient client,FhirContext ctx, Composition comp, Patient patient, Practitioner performer,
-                                                Observation riskfactor, List<Immunization> I, List<Observation> antibodyTests, Observation bloodType) {
+   private static Composition createComposition(IGenericClient client, FhirContext ctx, Composition comp, Patient patient, Practitioner performer,
+                                                Observation riskfactor, List<Immunization> I, Observation immunizationTestCovid,
+                                                Observation immunizationTestRoeteln , Observation bloodType) {
+
+
       comp
          .setStatus(Composition.CompositionStatus.FINAL)
          .setType(new CodeableConcept(
@@ -366,12 +369,23 @@ public class FHIRUebung7 {
       comp.addSection(vaccineSection);
 
 
+
+      Composition.SectionComponent antibodyCOVIDTestSection =
+         new Composition.SectionComponent()
+            .setTitle("Test auf Antikörper für COVID-19")
+            .addEntry(new Reference(immunizationTestCovid));
+
+      Composition.SectionComponent antibodyRubellaTestSection =
+         new Composition.SectionComponent()
+            .setTitle("Anti-Röteln-Tests")
+            .addEntry(new Reference(immunizationTestRoeteln));
+
       Composition.SectionComponent antibodyTestSection =
          new Composition.SectionComponent()
-            .setTitle("Anti-Körper-Tests");
-      for(Observation antibodytest : antibodyTests) {
-         antibodyTestSection.addEntry(new Reference(antibodytest));
-      }
+            .setTitle("Anti-Körper-Tests")
+            .addSection(antibodyCOVIDTestSection)
+            .addSection(antibodyRubellaTestSection);
+
 
 
       comp.addSection(antibodyTestSection);
