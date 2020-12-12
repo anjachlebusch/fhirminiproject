@@ -2,7 +2,7 @@
 <script>
 
 var xmlhttp = new XMLHttpRequest();
-var url = "http://hapi.fhir.org/baseR4/Composition/1710648/$document";
+var url = "http://hapi.fhir.org/baseR4/Composition/1710663/$document";
 
 xmlhttp.onreadystatechange = function() {
   if (this.readyState == 4 && this.status == 200) {
@@ -72,29 +72,26 @@ function prettyPrintDocument(data) {
                     }}
                     ]
             },
-            'observationRoeteln': {'<>':'tdbody','class': 'observation', 'html':[
-            //TODO: Date of Test
-                {'<>':'td','html':'Datum: Hier muss ein Datum hin'},
-                {'<>':'td','html':'Methode: ${method.coding.0.display}'},
-                {'<>':'td','html':'Titer: ${valueQuantity.value} ${valueQuantity.unit}'},
-                {'<>':'td','html':'Schutz vorhanden: ${interpretation.0.coding.0.display}'},
+            'observationRoeteln': {'<>':'tdbody','class': 'observationRoeteln', 'html':[
+                {'<>':'td','html':'${effectiveDateTime}'},
+                {'<>':'td','html':'${method.coding.0.display}'},
+                {'<>':'td','html':'${valueQuantity.value} ${valueQuantity.unit}'},
+                {'<>':'td','html':'${interpretation.0.coding.0.display}'},
                 {'<>':'td','html': function() {
                         return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
                     }}
                 ]
             },
-            'observation': {'<>':'div','class': 'observation', 'html':[
-            //TODO: Date of Test
-                {'<>':'p','html':'Datum: Hier muss ein Datum hin'},
-                {'<>':'p','html':'Untersuchung auf: ${code.coding.0.display}'},
-                {'<>':'p','html':'Ergebnis: ${valueCodeableConcept.coding.0.display}'},
-                {'<>':'p','html': function() {
+            'observation': {'<>':'tbody','class': 'observation', 'html':[
+                {'<>':'td','html':'${effectiveDateTime}'},
+                {'<>':'td','html':'${code.coding.0.display}'},
+                {'<>':'td','html':'${valueCodeableConcept.coding.0.display}'},
+                {'<>':'td','html': function() {
                         return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
                     }}
                 ]
             },
             'bloodType': {'<>':'div','class': 'bloodType', 'html':[
-            //TODO: Date of Test
                 {'<>':'p','html':'Blutgruppe und Rh-Faktor: ${valueCodeableConcept.coding.0.display} ${valueCodeableConcept.coding.1.display}'},
                 {'<>':'p','html':'Datum: ${effectiveDateTime}'},
                 //TODO Performer hinzufügen
@@ -137,8 +134,8 @@ function prettyPrintDocument(data) {
                             template.practitioner); break;
                     }
                     case "Observation": {
+                        console.log(entry[i].resource.category[0].coding[0].code);
                         //Blood type
-                        console.log("bloodType");
                         if(entry[i].resource.code.coding[0].code == "882-1"){
                             return json2html.transform(
                                 entry[i].resource,
@@ -146,9 +143,26 @@ function prettyPrintDocument(data) {
                         } else 
                         //Röteln
                         if(entry[i].resource.code.coding[0].code == "22497-2"){
-                            return json2html.transform(
-                                entry[i].resource,
-                                template.observationRoeteln); break;
+                            return json2html.transform(this,{ '<>':'div','class': 'roetelnTests', 'html':[
+                                {'<>':'h3', 'html': "Röteln-Antikörper-Bestimmungen"},
+                                {'<>':'table', 'html':[
+                                    {'<>':'thead','html':[
+                                        {'<>':'th','html':'Datum'},
+                                        {'<>':'th','html':'Methode(n)'},
+                                        {'<>':'th','html':'Titer'},
+                                        {'<>':'th','html':'Schutz vorhanden'},
+                                        {'<>':'th','html':'Arzt'},
+                                    ]},
+                                    {'<>':'tbody','html':
+                                        function() {
+                                            return json2html.transform(
+                                                entry[i].resource,
+                                                template.observationRoeteln);
+                                        }
+                                    },
+                                ]}
+                             ]});
+                            break;
                         } else if(entry[i].resource.category[0].coding[0].code == "social-history"){
                             return json2html.transform(this,{'<>':'table','class': 'riskFactors', 'html':[
                                 {'<>':'tbody','html':
@@ -160,13 +174,28 @@ function prettyPrintDocument(data) {
                                 },
                                  ]});
                         }
+                        //Sonstige Tests
                         else {
+                            return json2html.transform(this,{ '<>':'div','class': 'otherTests', 'html':[
+                                {'<>':'h3', 'html': "Ergebnisse von Antikörperuntersuchungen"},
+                                {'<>':'table', 'html':[
+                                    {'<>':'thead','html':[
+                                        {'<>':'th','html':'Datum'},
+                                        {'<>':'th','html':'Unterschung auf / durchgeführter Test'},
+                                        {'<>':'th','html':'Ergebnis'},
+                                        {'<>':'th','html':'Arzt'},
+                                    ]},
+                                    {'<>':'tbody','html':
+                                        function() {
+                                            return json2html.transform(
+                                                entry[i].resource,
+                                                template.observation);
+                                        }
+                                    },
+                                ]}
+                             ]});
                             break;
-                            return json2html.transform(
-                                entry[i].resource,
-                                template.observation); break;
                         }
-                        
                     }
                     default: {
                         
@@ -204,35 +233,13 @@ function prettyPrintDocument(data) {
                     template.sectionEntry);
                 break;
             }
-            case "Anti-Körper-Tests": 
-                return section.section.forEach((innerSection) => createCorrectLayout(innerSection));
-                break;
-            case "Röteln-Anitkörper-Bestimmungen": {
-                return json2html.transform(this, {'<>':'table','class': 'roetln_tests', 'html':[
-                    {'<>':'thead','html':[
-                        {'<>':'th','html':'Datum'},
-                        {'<>':'th','html':'Methode(n)'},
-                        {'<>':'th','html':'Titer'},
-                        {'<>':'th','html':'Schutz vorhanden'},
-                        {'<>':'th','html':'Arzt'},
-                    ]},
-                    {'<>':'tbody','html':
-                        function() {
-                            return json2html.transform(
-                                section.entry,
-                                template.sectionEntry);
-                        }
-                    },
-                     ]});
-                     break; 
-                 }
-            case "Risikofaktoren bei Impfungen": {
+            case "Anti-Körper-Tests": {
                 return json2html.transform(
                     section.entry,
                     template.sectionEntry);
-            }
-            default:
                 break;
+             }
+            default:
                 return json2html.transform(
                     section.entry,
                     template.sectionEntry);
