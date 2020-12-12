@@ -25,14 +25,14 @@ public class FHIRUebung7 {
        //Patient
        Patient antonie = createPatient(client);
 
-       //Blutgruppe
-       Observation bloodType = createBloodTypeForPatient(client, antonie);
-
        //Arztpraxis
        Organization doctorsOffice = createDoctorsOffice(client);
 
        //Arzt
        Practitioner doctor = createDoctor(client);
+
+       //Rolle des Arztes
+       PractitionerRole doctorRole = createDoctorRole(client, doctor, doctorsOffice);
 
        //Risikofaktoren Patient
       Observation riskfactor = new Observation()
@@ -90,6 +90,9 @@ public class FHIRUebung7 {
        );
        MethodOutcome outcome = createResource(client, riskfactor);
        riskfactor.setId(outcome.getId());
+
+      //Blutgruppe
+       Observation bloodType = createBloodTypeForPatient(client, antonie, doctor);
 
 
        // Impfung1
@@ -150,6 +153,8 @@ public class FHIRUebung7 {
              new Coding("http://snomed.info/sct", "10828004", "Positive (qualifier value)")
           ).setText("Schutz vorhanden");
        Observation immunizationTestCovid = createImmunizationTest(client, antonie, doctor, covidTest, covidResult, null, null, null);
+
+       //Composition
        Composition c = createComposition(client, ctx, comp, antonie, doctor, riskfactor, Arrays.asList(vaccine1, vaccine2, vaccine3,
           vaccine4, vaccine5, vaccine6), Arrays.asList(immunizationTestCovid, immunizationTestRoeteln), bloodType );
     }
@@ -208,7 +213,7 @@ public class FHIRUebung7 {
       return antonie;
    }
 
-   private static Observation createBloodTypeForPatient(IGenericClient client, Patient patient) {
+   private static Observation createBloodTypeForPatient(IGenericClient client, Patient patient, Practitioner doctor) {
       //Blood type
       Observation bloodType = new Observation()
          .setStatus(Observation.ObservationStatus.FINAL)
@@ -223,6 +228,7 @@ public class FHIRUebung7 {
             )
          )
          .setSubject(new Reference(patient))
+         .setPerformer((List<Reference>) new Reference(doctor))
          .setEffective(new DateTimeType(new GregorianCalendar(1900, Calendar.APRIL, 12)))
          .setValue(new CodeableConcept().setCoding(
             Arrays.asList(new Coding("http://snomed.info/sct", "112144000", "Blood group A (finding)"),
@@ -264,6 +270,17 @@ public class FHIRUebung7 {
       return doctor;
    }
 
+   private static PractitionerRole createDoctorRole(IGenericClient client, Practitioner doctor, Organization doctorsOffice) {
+      PractitionerRole doctorRole = new PractitionerRole()
+         .setPractitionerTarget(doctor).setPractitioner(new Reference(doctor))
+         .setOrganizationTarget(doctorsOffice).setOrganization(new Reference(doctorsOffice))
+         .addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
+            "A qualified/registered medical practitioner")));
+      MethodOutcome doctorRoleOutcome = createResource(client, doctorRole);
+      doctorRole.setId(doctorRoleOutcome.getId());
+      return doctorRole;
+   }
+
    private static Immunization createImmunization(IGenericClient client, Patient patient, Practitioner doctor,
                                                   CodeableConcept vaccineCode, String lotNumber, DateTimeType occurence) {
       Immunization vaccine = new Immunization()
@@ -290,6 +307,7 @@ public class FHIRUebung7 {
          .setCode(testType)
          .setSubject(new Reference(patient))
          .addPerformer(new Reference(performer))
+         .setEffective(new DateTimeType(new GregorianCalendar(1912, Calendar.JUNE, 07)))
          .setStatus(Observation.ObservationStatus.FINAL);
          if(testResult != null) {
             immunizationTest.setValue(testResult);
@@ -354,6 +372,8 @@ public class FHIRUebung7 {
       for(Observation antibodytest : antibodyTests) {
          antibodyTestSection.addEntry(new Reference(antibodytest));
       }
+
+
       comp.addSection(antibodyTestSection);
 
       Composition.SectionComponent riskfactorSection =
