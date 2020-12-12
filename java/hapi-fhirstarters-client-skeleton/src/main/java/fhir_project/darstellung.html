@@ -2,7 +2,7 @@
 <script>
 
 var xmlhttp = new XMLHttpRequest();
-var url = "http://hapi.fhir.org/baseR4/Composition/1710663/$document";
+var url = "http://hapi.fhir.org/baseR4/Composition/1710678/$document";
 
 xmlhttp.onreadystatechange = function() {
   if (this.readyState == 4 && this.status == 200) {
@@ -52,7 +52,7 @@ function prettyPrintDocument(data) {
                             this.name,
                             template.patientName);
                     }},
-                    {'<>':'p','html':'Geburtsdatum: ${birthDate}'},
+                    {'<>':'p','html':'Geburtsdatum: ${birthDate} in ${extension.0.valueAddress.city}'},
                     {'<>':'div','html':function() {
                         return json2html.transform(
                             this.address,
@@ -109,7 +109,7 @@ function prettyPrintDocument(data) {
                 ]
             },
             //TODO: add practition address here
-            'practitioner': {'<>':'p','html': '<div class="stamp">${name.0.prefix} ${name.0.given.0} ${name.0.family} </br> Schöne Straße 12 </br> 11223 Hamburg</div>'}
+            'organization': {'<>':'p','html': '<div class="stamp">${name} </br> ${address.0.line.0} </br> ${address.0.postalCode} ${address.0.city}</div>'}
         };
 
 
@@ -128,10 +128,10 @@ function prettyPrintDocument(data) {
                             template.immunization);
                          break; 
                     }
-                    case "Practitioner": {
+                    case "Organization": {
                         return json2html.transform(
                             entry[i].resource,
-                            template.practitioner); break;
+                            template.organization); break;
                     }
                     case "Observation": {
                         console.log(entry[i].resource.category[0].coding[0].code);
@@ -151,7 +151,7 @@ function prettyPrintDocument(data) {
                                         {'<>':'th','html':'Methode(n)'},
                                         {'<>':'th','html':'Titer'},
                                         {'<>':'th','html':'Schutz vorhanden'},
-                                        {'<>':'th','html':'Arzt'},
+                                        {'<>':'th','html':'Arztpraxis'},
                                     ]},
                                     {'<>':'tbody','html':
                                         function() {
@@ -183,7 +183,7 @@ function prettyPrintDocument(data) {
                                         {'<>':'th','html':'Datum'},
                                         {'<>':'th','html':'Unterschung auf / durchgeführter Test'},
                                         {'<>':'th','html':'Ergebnis'},
-                                        {'<>':'th','html':'Arzt'},
+                                        {'<>':'th','html':'Arztpraxis'},
                                     ]},
                                     {'<>':'tbody','html':
                                         function() {
@@ -204,7 +204,7 @@ function prettyPrintDocument(data) {
                 
             }
         }
-        return 'falsch';
+        return '';
     }
 
     function createCorrectLayout(section) {
@@ -215,7 +215,7 @@ function prettyPrintDocument(data) {
                         {'<>':'th','html':'Datum'},
                         {'<>':'th','html':'Impfung gegen'},
                         {'<>':'th','html':'Handelsname und Chargennummer'},
-                        {'<>':'th','html':'Arzt'},
+                        {'<>':'th','html':'Arztpraxis'},
                     ]},
                     {'<>':'tbody','html':
                         function() {
