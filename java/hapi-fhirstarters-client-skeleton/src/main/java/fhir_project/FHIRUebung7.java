@@ -228,7 +228,7 @@ public class FHIRUebung7 {
             )
          )
          .setSubject(new Reference(patient))
-         .setPerformer((List<Reference>) new Reference(doctor))
+         .setPerformer(Collections.singletonList(new Reference(doctor)))
          .setEffective(new DateTimeType(new GregorianCalendar(1900, Calendar.APRIL, 12)))
          .setValue(new CodeableConcept().setCoding(
             Arrays.asList(new Coding("http://snomed.info/sct", "112144000", "Blood group A (finding)"),
