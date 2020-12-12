@@ -178,6 +178,17 @@ public class FHIRUebung7 {
       cal.set(1827, 7, 6);
       antonie.setBirthDate(cal.getTime());
 
+      //Birthplace
+      Address birthplace =
+         new Address()
+            .setLine(Collections.singletonList(new StringType("Stresemannstraße 12")))
+            .setPostalCode("22179")
+            .setCity("Hamburg");
+      Extension birthplaceExtension = new Extension(
+         "http://hl7.org/fhir/StructureDefinition/birthPlace");
+      birthplaceExtension.setValue(birthplace);
+      antonie.addExtension(birthplaceExtension);
+
 
       //Address
       antonie.addAddress(
