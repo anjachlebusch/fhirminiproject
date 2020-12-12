@@ -92,62 +92,6 @@ public class FHIRUebung7 {
        riskfactor.setId(outcome.getId());
 
 
-       //Risikofaktoren Patient
-      Observation riskfactor = new Observation()
-         .setSubject(new Reference(antonie))
-         .addCategory(new CodeableConcept(
-            new Coding(ObservationCategory.SOCIALHISTORY.getSystem(), ObservationCategory.SOCIALHISTORY.toCode(), ObservationCategory.SOCIALHISTORY.getDisplay()))
-         ).setStatus(Observation.ObservationStatus.FINAL)
-         .setCode(new CodeableConcept(
-            new Coding("http://loinc.org", "30945-0", "vaccination contraindication/precaution")
-         ))
-         .addComponent(new Observation.ObservationComponentComponent()
-            .setCode(new CodeableConcept(
-               new Coding("http://loinc.org", "66177-7", "History of Hemophilia")
-            )).setValue(new BooleanType(true))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-            .setCode(new CodeableConcept(
-               new Coding("http ://loinc.org", "66678-4", "Diabetes [PhenX]")
-            )).setValue(new BooleanType(false))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-            .setCode(new CodeableConcept(
-               new Coding("http ://loinc.org", "LP6226-7", "Dialysis")
-            )).setValue(new BooleanType(false))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-            .setCode(new CodeableConcept(
-               new Coding("http ://loinc.org", "8681-9", "History of Nervous system disorders")
-            )).setValue(new BooleanType(false))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-            .setCode(new CodeableConcept(
-               new Coding("http ://loinc.org", "LP417852-3", "Solid organ transplant")
-            )).setValue(new BooleanType(false))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-            .setCode(new CodeableConcept(
-               new Coding("http ://loinc.org", "82757-6", "Immunodeficiency")
-            )).setValue(new BooleanType(false))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-            .setCode(new CodeableConcept(
-               new Coding("http ://loinc.org", "48765-2", "Allergies and adverse reactions Document")
-            )).setValue(new BooleanType(false))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-          .setCode(new CodeableConcept(
-             new Coding("http ://loinc.org", "30948-4", "Vaccination adverse event Narrative")
-          )).setValue(new BooleanType(false))
-         )
-         .addComponent(new Observation.ObservationComponentComponent()
-          .setCode(new CodeableConcept(
-             new Coding("http ://loinc.org", "LP97135-5", "Risk factors affecting health status and or outcome")
-          )).setValue(new BooleanType(false))
-       );
-
-
        // Impfung1
        CodeableConcept vaccineCode1 = new CodeableConcept()
           .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
@@ -244,8 +188,7 @@ public class FHIRUebung7 {
       );
 
       //Passport number
-//      antonie.addExtension().setUrl("http://acme.org/fhir/StructureDefinition/passport-number")
-//         .setValue(new StringType("12345ABC"));
+      antonie.addIdentifier((new Identifier().setType(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0203", "PPN", "Passportnumber"))).setValue("123987ABC567")));
 
 
       MethodOutcome patientOutcome = createResource(client, antonie);
@@ -370,13 +313,15 @@ public class FHIRUebung7 {
       comp
          .setStatus(Composition.CompositionStatus.FINAL)
          .setType(new CodeableConcept(
-            new Coding("http://hl7.org/fhir/ValueSet/document-classcodes", "11369-6", "History of Immunization")
+            new Coding("http://loinc.org", "11503-0", "Medical records")
          ))
+         .setSubject(new Reference(patient))
          .setDate(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime())
          .setAuthor(Collections.singletonList(new Reference(performer)))
          .setSubject(new Reference(patient))
          .setTitle("INTERNATIONALE BESCHEINIGUNGEN ÜBER IMPFUNGEN UND IMPFBUCH");;
       // todo: text
+
       Composition.SectionComponent deckblattSection =
          new Composition.SectionComponent()
          .setTitle("Patient");
