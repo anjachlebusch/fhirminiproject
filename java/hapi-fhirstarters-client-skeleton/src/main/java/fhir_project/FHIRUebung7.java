@@ -17,7 +17,7 @@ public class FHIRUebung7 {
 
         // Create a client
         FhirContext ctx = FhirContext.forR4();
-        IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
+        IGenericClient client = ctx.newRestfulGenericClient("http://hapi.fhir.org/baseR4");
 
         //Composition
        Composition comp = new Composition();
@@ -372,12 +372,12 @@ public class FHIRUebung7 {
 
       Composition.SectionComponent antibodyCOVIDTestSection =
          new Composition.SectionComponent()
-            .setTitle("Test auf Antikörper für COVID-19")
+            .setTitle("Ergebnisse von Antikörperuntersuchungen")
             .addEntry(new Reference(immunizationTestCovid));
 
       Composition.SectionComponent antibodyRubellaTestSection =
          new Composition.SectionComponent()
-            .setTitle("Anti-Röteln-Tests")
+            .setTitle("Röteln-Anitkörper-Bestimmungen")
             .addEntry(new Reference(immunizationTestRoeteln));
 
       Composition.SectionComponent antibodyTestSection =

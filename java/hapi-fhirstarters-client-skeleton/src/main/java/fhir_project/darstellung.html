@@ -1,692 +1,120 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/json2html/1.4.0/json2html.min.js"></script>
- <link rel="stylesheet" href="style.css">
 <script>
 
-var getJSON = function(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'json';
-    xhr.onload = function() {
-    
-        var status = xhr.status;
-        
-        if (status == 200) {
-            callback(null, xhr.response);
-        } else {
-            callback(status);
-        }
-    };
-    xhr.send();
+var xmlhttp = new XMLHttpRequest();
+var url = "http://hapi.fhir.org/baseR4/Composition/1710648/$document";
+
+xmlhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    var myArr = JSON.parse(this.responseText);
+        prettyPrintDocument(myArr);
+  }
 };
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
 
-getJSON('http://time.jsontest.com',  function(err, data) {
-    if (err != null) {
-        console.error(err);
-    } else {
-        var text = `Date: ${data.date}
-Time: ${data.time}
-Unix time: ${data.milliseconds_since_epoch}`
-        console.log(text);
-    }
-});
-
-
-   let data = {
-  "resourceType": "Bundle",
-  "type": "document",
-  "entry": [
-    {
-      "resource": {
-        "resourceType": "Composition",
-                "id": "155564",
-                "meta": {
-                    "versionId": "1",
-                    "lastUpdated": "2020-12-12T20:31:28.000+01:00",
-                    "source": "#fcSb4HYbqcyygMKZ"
-                },
-                "status": "final",
-                "type": {
-                    "coding": [
-                        {
-                            "system": "http://loinc.org",
-                            "code": "11503-0",
-                            "display": "Medical records"
-                        }
-                    ]
-                },
-                "subject": {
-                    "reference": "Patient/155550"
-                },
-                "date": "1846-10-01T00:00:00+01:00",
-                "author": [
-                    {
-                        "reference": "Practitioner/155552"
-                    }
-                ],
-                "title": "INTERNATIONALE BESCHEINIGUNGEN ÜBER IMPFUNGEN UND IMPFBUCH",
-                "section": [
-                    {
-                        "title": "Patient",
-                        "entry": [
-                            {
-                                "reference": "Patient/155550"
-                            }
-                        ]
-                    },
-                    {
-                        "title": "Impfungen",
-                        "entry": [
-                            {
-                                "reference": "Immunization/155556"
-                            },
-                            {
-                                "reference": "Immunization/155557"
-                            },
-                            {
-                                "reference": "Immunization/155558"
-                            },
-                            {
-                                "reference": "Immunization/155559"
-                            },
-                            {
-                                "reference": "Immunization/155560"
-                            },
-                            {
-                                "reference": "Immunization/155561"
-                            }
-                        ]
-                    },
-                    {
-                        "title": "Anti-Körper-Tests",
-                        "section": [
-                            {
-                                "title": "Test auf Antikörper für COVID-19",
-                                "entry": [
-                                    {
-                                        "reference": "Observation/155563"
-                                    }
-                                ]
-                            },
-                            {
-                                "title": "Anti-Röteln-Tests",
-                                "entry": [
-                                    {
-                                        "reference": "Observation/155562"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "title": "Risikofaktoren bei Impfungen",
-                        "entry": [
-                            {
-                                "reference": "Observation/155554"
-                            }
-                        ]
-                    },
-                    {
-                        "title": "Blutgruppe und Rh-Faktor",
-                        "entry": [
-                            {
-                                "reference": "Observation/155555"
-                            }
-                        ]
-                    }
-                ]
-            }
-    },
-    {
-        "resource": {
-        "resourceType": "Patient",
-        "id": "155550",
-        "meta": {
-            "versionId": "1",
-            "lastUpdated": "2020-12-12T20:31:25.000+01:00",
-            "source": "#A07lKRNWWVWE6ss8"
-        },
-        "text": {
-            "status": "generated",
-            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><div class=\"hapiHeaderText\">Antonie <b>GRÜNLICH </b></div><table class=\"hapiPropertyTable\"><tbody><tr><td>Identifier</td><td>1234567890</td></tr><tr><td>Address</td><td><span>Stresemannstraße 12 </span><br/><span>Hamburg </span></td></tr><tr><td>Date of birth</td><td><span>06 August 1827</span></td></tr></tbody></table></div>"
-        },
-        "extension": [
-            {
-                "url": "http://hl7.org/fhir/StructureDefinition/birthPlace",
-                "valueAddress": {
-                    "line": [
-                        "Stresemannstraße 12"
-                    ],
-                    "city": "Hamburg",
-                    "postalCode": "22179"
-                }
-            }
-        ],
-        "identifier": [
-            {
-                "system": "http://kh-uzl.de/fhir/patients",
-                "value": "1234567890"
-            },
-            {
-                "type": {
-                    "coding": [
-                        {
-                            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
-                            "code": "PPN",
-                            "display": "Passportnumber"
-                        }
-                    ]
-                },
-                "value": "123987ABC567"
-            }
-        ],
-        "name": [
-            {
-                "use": "official",
-                "family": "Grünlich",
-                "given": [
-                    "Antonie"
-                ]
-            }
-        ],
-        "birthDate": "1827-08-06",
-        "address": [
-            {
-                "line": [
-                    "Stresemannstraße 12"
-                ],
-                "city": "Hamburg",
-                "postalCode": "22179"
-            }
-        ]
-    }
-},
-    {
-      "resource": {
-        "resourceType": "Practitioner",
-        "id": "153366",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:28.000+01:00",
-          "source": "#CeHa0nB7Y4emoNED"
-        },
-        "name": [
-          {
-            "family": "Lehmann",
-            "given": [
-              "Frauke"
-            ],
-            "prefix": [
-              "Dr."
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Immunization",
-        "id": "153367",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:28.000+01:00",
-          "source": "#tWasmD84CQPgUKBh"
-        },
-        "status": "completed",
-        "vaccineCode": {
-          "coding": [
-            {
-              "system": "http://hl7.org/fhir/sid/cvx",
-              "code": "140",
-              "display": "Influenza, seasonal, injectable, preservative free"
-            }
-          ],
-          "text": "Mutagrip"
-        },
-        "patient": {
-          "reference": "Patient/153363"
-        },
-        "occurrenceDateTime": "1846-10-01T00:00:00+01:00",
-        "lotNumber": "123456",
-        "performer": [
-          {
-            "actor": {
-              "reference": "Practitioner/153366"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Observation",
-        "id": "153364",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:28.000+01:00",
-          "source": "#voKlq3ekYP5oxRAB"
-        },
-        "status": "final",
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                "code": "Laboratory",
-                "display": "The results of observations generated by laboratories. Laboratory results are typically generated by laboratories providing analytic services in areas such as chemistry, hematology, serology, histology, cytology, anatomic pathology (including digital pathology), microbiology, and/or virology. These observations are based on analysis of specimens obtained from the patient and submitted to the laboratory."
-              }
-            ]
-          }
-        ],
-        "code": {
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "882-1",
-              "display": "ABO and Rh group [Type] in Blood"
-            }
-          ]
-        },
-        "subject": {
-          "reference": "Patient/153363"
-        },
-        "effectiveDateTime": "1900-04-12T00:00:00+01:00",
-        "valueCodeableConcept": {
-          "coding": [
-            {
-              "system": "http://snomed.info/sct",
-              "code": "112144000",
-              "display": "Blood group A (finding)"
-            },
-            {
-              "system": "http://snomed.info/sct",
-              "code": "165747007",
-              "display": "RhD positive (finding)"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Immunization",
-        "id": "153370",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:29.000+01:00",
-          "source": "#KbRUYggsB7qbh62a"
-        },
-        "status": "completed",
-        "vaccineCode": {
-          "coding": [
-            {
-              "system": "http://hl7.org/fhir/sid/cvx",
-              "code": "102",
-              "display": "DTP- Haemophilus influenzae type b conjugate and hepatitis b vaccine"
-            }
-          ],
-          "text": "Repevax"
-        },
-        "patient": {
-          "reference": "Patient/153363"
-        },
-        "occurrenceDateTime": "1828-01-02T00:00:00+01:00",
-        "lotNumber": "98765",
-        "performer": [
-          {
-            "actor": {
-              "reference": "Practitioner/153366"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Immunization",
-        "id": "153371",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:29.000+01:00",
-          "source": "#qi8zasRFyEe1bRiL"
-        },
-        "status": "completed",
-        "vaccineCode": {
-          "coding": [
-            {
-              "system": "http://hl7.org/fhir/sid/cvx",
-              "code": "162",
-              "display": "meningococcal B vaccine, fully recombinant"
-            }
-          ],
-          "text": "Bexsero"
-        },
-        "patient": {
-          "reference": "Patient/153363"
-        },
-        "occurrenceDateTime": "1930-09-25T00:00:00+01:00",
-        "lotNumber": "243546",
-        "performer": [
-          {
-            "actor": {
-              "reference": "Practitioner/153366"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Immunization",
-        "id": "153368",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:28.000+01:00",
-          "source": "#RMTB5fraPBhPDMKO"
-        },
-        "status": "completed",
-        "vaccineCode": {
-          "coding": [
-            {
-              "system": "http://hl7.org/fhir/sid/cvx",
-              "code": "07",
-              "display": "mumps virus vaccine"
-            }
-          ],
-          "text": "Priorix"
-        },
-        "patient": {
-          "reference": "Patient/153363"
-        },
-        "occurrenceDateTime": "1842-04-12T00:00:00+01:00",
-        "lotNumber": "98765",
-        "performer": [
-          {
-            "actor": {
-              "reference": "Practitioner/153366"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Immunization",
-        "id": "153369",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:29.000+01:00",
-          "source": "#1vN91Qk1wMPb4k7B"
-        },
-        "status": "completed",
-        "vaccineCode": {
-          "coding": [
-            {
-              "system": "http://hl7.org/fhir/sid/cvx",
-              "code": "146",
-              "display": "DTaP,IPV,Hib,HepB"
-            }
-          ],
-          "text": "Infanrix"
-        },
-        "patient": {
-          "reference": "Patient/153363"
-        },
-        "occurrenceDateTime": "1835-06-23T00:00:00+01:00",
-        "lotNumber": "98765",
-        "performer": [
-          {
-            "actor": {
-              "reference": "Practitioner/153366"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Observation",
-        "id": "153374",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:30.000+01:00",
-          "source": "#joGcy1KSxw0K7tZP"
-        },
-        "status": "final",
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                "code": "laboratory",
-                "display": "Laboratory"
-              }
-            ]
-          }
-        ],
-        "code": {
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "95209-3",
-              "display": "SARS-CoV+SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay"
-            }
-          ]
-        },
-        "subject": {
-          "reference": "Patient/153363"
-        },
-        "performer": [
-          {
-            "reference": "Practitioner/153366"
-          }
-        ],
-        "valueCodeableConcept": {
-          "coding": [
-            {
-              "system": "http://snomed.info/sct",
-              "code": "10828004",
-              "display": "Positive (qualifier value)"
-            }
-          ],
-          "text": "Schutz vorhanden"
-        }
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Immunization",
-        "id": "153372",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:29.000+01:00",
-          "source": "#BiJgTnJi3DlIqN8V"
-        },
-        "status": "completed",
-        "vaccineCode": {
-          "coding": [
-            {
-              "system": "http://hl7.org/fhir/sid/cvx",
-              "code": "140",
-              "display": "Influenza, seasonal, injectable, preservative free"
-            }
-          ],
-          "text": "Mutagrip"
-        },
-        "patient": {
-          "reference": "Patient/153363"
-        },
-        "occurrenceDateTime": "1852-07-12T00:00:00+01:00",
-        "lotNumber": "123456",
-        "performer": [
-          {
-            "actor": {
-              "reference": "Practitioner/153366"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "resource": {
-        "resourceType": "Observation",
-        "id": "153373",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-12-11T16:26:29.000+01:00",
-          "source": "#pONMEgpoA51hQsUY"
-        },
-        "status": "final",
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                "code": "laboratory",
-                "display": "Laboratory"
-              }
-            ]
-          }
-        ],
-        "code": {
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "22497-2",
-              "display": "Rubella virus Ab [Titer] in Serum"
-            }
-          ]
-        },
-        "subject": {
-          "reference": "Patient/153363"
-        },
-        "performer": [
-          {
-            "reference": "Practitioner/153366"
-          }
-        ],
-        "valueQuantity": {
-          "value": 8,
-          "unit": "IE/ml"
-        },
-        "interpretation": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
-                "code": "NEG",
-                "display": "Negative"
-              }
-            ]
-          }
-        ],
-        "method": {
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "LP217198-3",
-              "display": "Rapid immunoassay"
-            }
-          ]
-        }
-      }
-    }
-  ]
-}
-
+function prettyPrintDocument(data) {
     let template = { 
-        'composition': {'<>':'div','html': function(){
-            return json2html.transform(
-                    this.entry[0],
-                    template.compositionEntry);
-        }},
-        'compositionEntry': {'<>':'div','html': function() {
-            return json2html.transform(
-                    this.resource,
-                    template.compositionResource);
-        }},
-        'compositionResource': {'<>':'div','html': [
-            {'<>':'h1','html':'${title}'},
-            {'<>':'div','html': function(){
+            'composition': {'<>':'div','html': function(){
                 return json2html.transform(
-                    this.section,
-                    template.compositionSection);
-            }}
-            ]
-        },
-        'compositionSection': {'<>':'div','html':[
-            {'<>':'h2','html':'${title}'},
-            {'<>':'div','html': function(){
-                return createCorrectLayout(this)
-            }}
-            ]
-        },
-        'sectionEntry': {'<>':'div','html': [
-            {'<>':'div','html': function() {
-                return findResourceObject(data.entry, getResourceTypeFromReference(this.reference), getResourceIdFromReference(this.reference));
-            }}
-        ]},
-        'patient': {'<>':'div','html': [
-                {'<>':'div','html':function() {
+                        this.entry[0],
+                        template.compositionEntry);
+            }},
+            'compositionEntry': {'<>':'div','html': function() {
+                return json2html.transform(
+                        this.resource,
+                        template.compositionResource);
+            }},
+            'compositionResource': {'<>':'div','html': [
+                {'<>':'h1','html':'${title}'},
+                {'<>':'div','html': function(){
                     return json2html.transform(
-                        this.name,
-                        template.patientName);
-                }},
-                {'<>':'p','html':'Geburtsdatum: ${birthDate}'},
-                {'<>':'div','html':function() {
-                    return json2html.transform(
-                        this.address,
-                        template.address);
-                }},
-                {'<>':'p','html':'Reisepass-Nr. oder Nr. des Pers.-Ausweises: ${passport}'}
-            ]
-        },
-        'patientName': {'<>':'p','html': 'Ausgestellt für: ${family}, ${given.0}'},
-        'address': {'<>':'p','html': 'Adresse: ${line.0}; ${postalCode} ${city}'},
-        'immunization': {'<>':'tbody','html':[
-            {'<>':'td','html':'${occurrenceDateTime}'},
-            {'<>':'td','html':'${vaccineCode.coding.0.display}'},
-            {'<>':'td','html':'${vaccineCode.text} ${lotNumber}'},
-            {'<>':'td','html': function() {
-                return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].actor.reference), getResourceIdFromReference(this.performer[0].actor.reference));
+                        this.section,
+                        template.compositionSection);
                 }}
                 ]
-        },
-        'observationRoeteln': {'<>':'div','class': 'observation', 'html':[
-        //TODO: Date of Test
-            {'<>':'p','html':'Datum: Hier muss ein Datum hin'},
-            {'<>':'p','html':'Methode: ${method.coding.0.display}'},
-            {'<>':'p','html':'Titer: ${valueQuantity.value} ${valueQuantity.unit}'},
-            {'<>':'p','html':'Schutz vorhanden: ${interpretation.0.coding.0.display}'},
-            {'<>':'p','html': function() {
-                    return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
+            },
+            'compositionSection': {'<>':'div','html':[
+                {'<>':'h2','html':'${title}'},
+                {'<>':'div','html': function(){
+                    return createCorrectLayout(this)
                 }}
-            ]
-        },
-        'observation': {'<>':'div','class': 'observation', 'html':[
-        //TODO: Date of Test
-            {'<>':'p','html':'Datum: Hier muss ein Datum hin'},
-            {'<>':'p','html':'Untersuchung auf: ${code.coding.0.display}'},
-            {'<>':'p','html':'Ergebnis: ${valueCodeableConcept.coding.0.display}'},
-            {'<>':'p','html': function() {
-                    return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
+                ]
+            },
+            'sectionEntry': {'<>':'div','html': [
+                {'<>':'div','html': function() {
+                    return findResourceObject(data.entry, getResourceTypeFromReference(this.reference), getResourceIdFromReference(this.reference));
                 }}
-            ]
-        },
-        'bloodType': {'<>':'div','class': 'bloodType', 'html':[
-        //TODO: Date of Test
-            {'<>':'p','html':'Blutgruppe und Rh-Faktor: ${code.coding.0.display} ${code.coding.1.display}'},
-            {'<>':'p','html':'Untersuchung auf: ${code.coding.0.display}'},
-            //TODO: Datum einfügen
-            {'<>':'p','html':'Datum: Hier steht bald ein Datum'},
-            //TODO Performer hinzufügen
-            /*{'<>':'p','html': function() {
-                    return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
-                }}*/
-            ]
-        },
-        //TODO: add practition address here
-        'practitioner': {'<>':'p','html': '<div class="stamp">${name.0.prefix} ${name.0.given.0} ${name.0.family} </br> Schöne Straße 12 </br> 11223 Hamburg</div>'}
-    };
+            ]},
+            'patient': {'<>':'div','html': [
+                    {'<>':'div','html':function() {
+                        return json2html.transform(
+                            this.name,
+                            template.patientName);
+                    }},
+                    {'<>':'p','html':'Geburtsdatum: ${birthDate}'},
+                    {'<>':'div','html':function() {
+                        return json2html.transform(
+                            this.address,
+                            template.address);
+                    }},
+                    {'<>':'p','html':'Reisepass-Nr. oder Nr. des Pers.-Ausweises: ${identifier.1.value}'}
+                ]
+            },
+            'patientName': {'<>':'p','html': 'Ausgestellt für: ${family}, ${given.0}'},
+            'address': {'<>':'p','html': 'Adresse: ${line.0}; ${postalCode} ${city}'},
+            'immunization': {'<>':'tbody','html':[
+                {'<>':'td','html':'${occurrenceDateTime}'},
+                {'<>':'td','html':'${vaccineCode.coding.0.display}'},
+                {'<>':'td','html':'${vaccineCode.text} ${lotNumber}'},
+                {'<>':'td','html': function() {
+                    return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].actor.reference), getResourceIdFromReference(this.performer[0].actor.reference));
+                    }}
+                    ]
+            },
+            'observationRoeteln': {'<>':'tdbody','class': 'observation', 'html':[
+            //TODO: Date of Test
+                {'<>':'td','html':'Datum: Hier muss ein Datum hin'},
+                {'<>':'td','html':'Methode: ${method.coding.0.display}'},
+                {'<>':'td','html':'Titer: ${valueQuantity.value} ${valueQuantity.unit}'},
+                {'<>':'td','html':'Schutz vorhanden: ${interpretation.0.coding.0.display}'},
+                {'<>':'td','html': function() {
+                        return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
+                    }}
+                ]
+            },
+            'observation': {'<>':'div','class': 'observation', 'html':[
+            //TODO: Date of Test
+                {'<>':'p','html':'Datum: Hier muss ein Datum hin'},
+                {'<>':'p','html':'Untersuchung auf: ${code.coding.0.display}'},
+                {'<>':'p','html':'Ergebnis: ${valueCodeableConcept.coding.0.display}'},
+                {'<>':'p','html': function() {
+                        return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
+                    }}
+                ]
+            },
+            'bloodType': {'<>':'div','class': 'bloodType', 'html':[
+            //TODO: Date of Test
+                {'<>':'p','html':'Blutgruppe und Rh-Faktor: ${valueCodeableConcept.coding.0.display} ${valueCodeableConcept.coding.1.display}'},
+                {'<>':'p','html':'Datum: ${effectiveDateTime}'},
+                //TODO Performer hinzufügen
+                /*{'<>':'p','html': function() {
+                        return findResourceObject(data.entry, getResourceTypeFromReference(this.performer[0].reference), getResourceIdFromReference(this.performer[0].reference));
+                    }}*/
+                ]
+            },
+            'riskFactors': {
+                '<>':'tbody','class': 'riskFactors', 'html':[
+                    {'<>':'tr','html':[
+                        {'<>':'td', 'html': '${code.coding.0.display}'},
+                        {'<>':'td', 'html': '${valueBoolean}'}
+                    ]},
+                ]
+            },
+            //TODO: add practition address here
+            'practitioner': {'<>':'p','html': '<div class="stamp">${name.0.prefix} ${name.0.given.0} ${name.0.family} </br> Schöne Straße 12 </br> 11223 Hamburg</div>'}
+        };
+
 
     function findResourceObject(entry, resourceType, id) {
         for (var i = 0; i < entry.length; i++){
@@ -710,6 +138,7 @@ Unix time: ${data.milliseconds_since_epoch}`
                     }
                     case "Observation": {
                         //Blood type
+                        console.log("bloodType");
                         if(entry[i].resource.code.coding[0].code == "882-1"){
                             return json2html.transform(
                                 entry[i].resource,
@@ -720,7 +149,19 @@ Unix time: ${data.milliseconds_since_epoch}`
                             return json2html.transform(
                                 entry[i].resource,
                                 template.observationRoeteln); break;
-                        } else {
+                        } else if(entry[i].resource.category[0].coding[0].code == "social-history"){
+                            return json2html.transform(this,{'<>':'table','class': 'riskFactors', 'html':[
+                                {'<>':'tbody','html':
+                                    function() {
+                                        return json2html.transform(
+                                            entry[i].resource.component,
+                                            template.riskFactors);
+                                    }
+                                },
+                                 ]});
+                        }
+                        else {
+                            break;
                             return json2html.transform(
                                 entry[i].resource,
                                 template.observation); break;
@@ -757,8 +198,41 @@ Unix time: ${data.milliseconds_since_epoch}`
                      ]});
                      break; 
                  }
-            case "Anti-Röteln-Tests": break;
-            default: break;
+            case "Patient": case "Blutgruppe und Rh-Faktor": {
+                return json2html.transform(
+                    section.entry,
+                    template.sectionEntry);
+                break;
+            }
+            case "Anti-Körper-Tests": 
+                return section.section.forEach((innerSection) => createCorrectLayout(innerSection));
+                break;
+            case "Röteln-Anitkörper-Bestimmungen": {
+                return json2html.transform(this, {'<>':'table','class': 'roetln_tests', 'html':[
+                    {'<>':'thead','html':[
+                        {'<>':'th','html':'Datum'},
+                        {'<>':'th','html':'Methode(n)'},
+                        {'<>':'th','html':'Titer'},
+                        {'<>':'th','html':'Schutz vorhanden'},
+                        {'<>':'th','html':'Arzt'},
+                    ]},
+                    {'<>':'tbody','html':
+                        function() {
+                            return json2html.transform(
+                                section.entry,
+                                template.sectionEntry);
+                        }
+                    },
+                     ]});
+                     break; 
+                 }
+            case "Risikofaktoren bei Impfungen": {
+                return json2html.transform(
+                    section.entry,
+                    template.sectionEntry);
+            }
+            default:
+                break;
                 return json2html.transform(
                     section.entry,
                     template.sectionEntry);
@@ -776,15 +250,28 @@ Unix time: ${data.milliseconds_since_epoch}`
         return reference.substr(slashIndex + 1, reference.length - slashIndex -1);
     }
 
-
-  
-
-    
     //native javascript
     document.write( json2html.transform(data,template.composition) );
-    
-    //or with jQuery
-    //$("#result").json2html(data,template);
-    
+
+
+}
 </script>
+<script type="text/javascript">
+setTimeout(() => { 
+    var link = document.createElement('link'); 
+  
+        // set the attributes for link element  
+        link.rel = 'stylesheet';  
+      
+        link.type = 'text/css'; 
+      
+        link.href = 'style.css';  
+  
+        // Append link element to HTML head 
+        document.head.appendChild(link);
+ }, 500);
+     
+
+ </script>
+
 
