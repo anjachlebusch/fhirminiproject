@@ -2,7 +2,7 @@
 <script>
 
 var xmlhttp = new XMLHttpRequest();
-var url = "http://hapi.fhir.org/baseR4/Composition/1710678/$document";
+var url = "http://hapi.fhir.org/baseR4/Composition/1710962/$document";
 
 xmlhttp.onreadystatechange = function() {
   if (this.readyState == 4 && this.status == 200) {
@@ -108,7 +108,7 @@ function prettyPrintDocument(data) {
                     ]},
                 ]
             },
-            //TODO: add practition address here
+            'practitioner': {'<>':'p','html': '${name.0.prefix.0} ${name.0.given.0} ${name.0.family}'},
             'organization': {'<>':'p','html': '<div class="stamp">${name} </br> ${address.0.line.0} </br> ${address.0.postalCode} ${address.0.city}</div>'}
         };
 
@@ -128,13 +128,31 @@ function prettyPrintDocument(data) {
                             template.immunization);
                          break; 
                     }
+                    case "Practitioner": {
+                        return json2html.transform(
+                            entry[i].resource,
+                            template.practitioner);
+                         break; 
+                    }
                     case "Organization": {
                         return json2html.transform(
                             entry[i].resource,
-                            template.organization); break;
+                            template.organization);
+                         break; 
+                    }
+                    case "PractitionerRole": {
+                        return json2html.transform(this,{ '<>':'div','class': 'practitionerRole', 'html':[
+                            {'<>':'div','class': 'practitioner', 'html': function() {
+                                return findResourceObject(entry, getResourceTypeFromReference(entry[i].resource.practitioner.reference), getResourceIdFromReference(entry[i].resource.practitioner.reference));
+                             }},
+                             {'<>':'div','class': 'organization', 'html': function() {
+                                return findResourceObject(entry, getResourceTypeFromReference(entry[i].resource.organization.reference), getResourceIdFromReference(entry[i].resource.organization.reference));
+                             }}
+                        
+                        ]});
+                        break;
                     }
                     case "Observation": {
-                        console.log(entry[i].resource.category[0].coding[0].code);
                         //Blood type
                         if(entry[i].resource.code.coding[0].code == "882-1"){
                             return json2html.transform(

@@ -92,45 +92,51 @@ public class FHIRUebung7 {
        riskfactor.setId(outcome.getId());
 
       //Blutgruppe
-       Observation bloodType = createBloodTypeForPatient(client, antonie, doctorsOffice);
+       Observation bloodType = createBloodTypeForPatient(client, antonie, doctorRole);
 
 
        // Impfung1
        CodeableConcept vaccineCode1 = new CodeableConcept()
           .setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
           .setText("Mutagrip");
-       DateTimeType occurenceDate1 = new DateTimeType(new GregorianCalendar(1846, Calendar.OCTOBER, 1));
-       Immunization vaccine1 = createImmunization(client, antonie, doctorsOffice, vaccineCode1, "123456", occurenceDate1);
+       Calendar occurenceDate1 = Calendar.getInstance();
+       occurenceDate1.set(1846, 9, 0);
+       Immunization vaccine1 = createImmunization(client, antonie, doctorRole, vaccineCode1, "123456", occurenceDate1);
 
        // Impfung2
        CodeableConcept vaccineCode2 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "07", "mumps virus vaccine")))
           .setText("Priorix");
-       DateTimeType occurenceDate2 = new DateTimeType(new GregorianCalendar(1842, Calendar.APRIL, 12));
-       Immunization vaccine2 = createImmunization(client, antonie, doctorsOffice, vaccineCode2, "98765", occurenceDate2);
+       Calendar occurenceDate2 = Calendar.getInstance();
+       occurenceDate2.set(1842, 3, 11);
+       Immunization vaccine2 = createImmunization(client, antonie, doctorRole, vaccineCode2, "98765", occurenceDate2);
 
        // Impfung3
        CodeableConcept vaccineCode3 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "146", "DTaP,IPV,Hib,HepB")))
           .setText("Infanrix");
-       DateTimeType occurenceDate3 = new DateTimeType(new GregorianCalendar(1835, Calendar.JUNE, 23));
-       Immunization vaccine3 = createImmunization(client, antonie, doctorsOffice, vaccineCode3, "98765", occurenceDate3);
+       Calendar occurenceDate3 = Calendar.getInstance();
+       occurenceDate3.set(1835, 5, 22);
+       Immunization vaccine3 = createImmunization(client, antonie, doctorRole, vaccineCode3, "98765", occurenceDate3);
 
        // Impfung4
        CodeableConcept vaccineCode4 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "102", "DTP- Haemophilus influenzae type b conjugate and hepatitis b vaccine")))
           .setText("Repevax");
-       DateTimeType occurenceDate4 = new DateTimeType(new GregorianCalendar(1828, Calendar.JANUARY, 2));
-       Immunization vaccine4 = createImmunization(client, antonie, doctorsOffice, vaccineCode4, "98765", occurenceDate4);
+       Calendar occurenceDate4 = Calendar.getInstance();
+       occurenceDate4.set(1828, 0, 1);
+       Immunization vaccine4 = createImmunization(client, antonie, doctorRole, vaccineCode4, "98765", occurenceDate4);
 
        // Impfung5
        CodeableConcept vaccineCode5 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "162", "meningococcal B vaccine, fully recombinant")))
           .setText("Bexsero");
-       DateTimeType occurenceDate5 = new DateTimeType(new GregorianCalendar(1930, Calendar.SEPTEMBER, 25));
-       Immunization vaccine5 = createImmunization(client, antonie, doctorsOffice, vaccineCode5, "243546", occurenceDate5);
+       Calendar occurenceDate5 = Calendar.getInstance();
+       occurenceDate5.set(1930, 8, 24);
+       Immunization vaccine5 = createImmunization(client, antonie, doctorRole, vaccineCode5, "243546", occurenceDate5);
 
        // Impfung6
        CodeableConcept vaccineCode6 = new CodeableConcept().setCoding(Collections.singletonList(new Coding("http://hl7.org/fhir/sid/cvx", "140", "Influenza, seasonal, injectable, preservative free")))
           .setText("Mutagrip");
-       DateTimeType occurenceDate6 = new DateTimeType(new GregorianCalendar(1852, Calendar.JULY, 12));
-       Immunization vaccine6 = createImmunization(client, antonie, doctorsOffice, vaccineCode6, "123456", occurenceDate6);
+       Calendar occurenceDate6 = Calendar.getInstance();
+       occurenceDate6.set(1852, 6, 11);
+       Immunization vaccine6 = createImmunization(client, antonie, doctorRole, vaccineCode6, "123456", occurenceDate6);
 
        //Anti-Körper-Test - Röteln
        CodeableConcept roetelnTest = new CodeableConcept(new Coding("http://loinc.org", "22497-2","Rubella virus Ab [Titer] in Serum"));
@@ -145,17 +151,17 @@ public class FHIRUebung7 {
        CodeableConcept testMethod = new CodeableConcept(
           new Coding("http://loinc.org", "LP217198-3", "Rapid immunoassay")
        );
-       Observation immunizationTestRoeteln = createImmunizationTest(client, antonie, doctorsOffice, roetelnTest, null, roetelnResult, testMethod, interpretations);
+       Observation immunizationTestRoeteln = createImmunizationTest(client, antonie, doctorRole, roetelnTest, null, roetelnResult, testMethod, interpretations);
 
        //Anti-Körper-Test - COVID
        CodeableConcept covidTest = new CodeableConcept(new Coding("http://loinc.org", "95209-3", "SARS-CoV+SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay"));
        CodeableConcept covidResult = new CodeableConcept(
              new Coding("http://snomed.info/sct", "10828004", "Positive (qualifier value)")
           ).setText("Schutz vorhanden");
-       Observation immunizationTestCovid = createImmunizationTest(client, antonie, doctorsOffice, covidTest, covidResult, null, null, null);
+       Observation immunizationTestCovid = createImmunizationTest(client, antonie, doctorRole, covidTest, covidResult, null, null, null);
 
        //Composition
-       Composition c = createComposition(client, ctx, comp, antonie, doctorsOffice, riskfactor, Arrays.asList(vaccine1, vaccine2, vaccine3,
+       Composition c = createComposition(client, ctx, comp, antonie, doctorRole, riskfactor, Arrays.asList(vaccine1, vaccine2, vaccine3,
           vaccine4, vaccine5, vaccine6), Arrays.asList(immunizationTestCovid, immunizationTestRoeteln), bloodType );
     }
 
@@ -179,7 +185,6 @@ public class FHIRUebung7 {
 
       // Birthday
       Calendar cal = Calendar.getInstance();
-      // CAVE: Java integer starts by 0!
       cal.set(1827, 7, 6);
       antonie.setBirthDate(cal.getTime());
 
@@ -213,8 +218,10 @@ public class FHIRUebung7 {
       return antonie;
    }
 
-   private static Observation createBloodTypeForPatient(IGenericClient client, Patient patient, Organization doctorsOffice) {
+   private static Observation createBloodTypeForPatient(IGenericClient client, Patient patient, PractitionerRole doctor) {
       //Blood type
+      Calendar cal = Calendar.getInstance();
+      cal.set(1900, 3, 11);
       Observation bloodType = new Observation()
          .setStatus(Observation.ObservationStatus.FINAL)
          .setCategory(
@@ -228,8 +235,8 @@ public class FHIRUebung7 {
             )
          )
          .setSubject(new Reference(patient))
-         .setPerformer(Collections.singletonList(new Reference(doctorsOffice)))
-         .setEffective(new DateTimeType(new GregorianCalendar(1900, Calendar.APRIL, 12)))
+         .setPerformer(Collections.singletonList(new Reference(doctor)))
+         .setEffective(new DateTimeType(cal))
          .setValue(new CodeableConcept().setCoding(
             Arrays.asList(new Coding("http://snomed.info/sct", "112144000", "Blood group A (finding)"),
                new Coding("http://snomed.info/sct", "165747007", "RhD positive (finding)")))
@@ -281,14 +288,14 @@ public class FHIRUebung7 {
       return doctorRole;
    }
 
-   private static Immunization createImmunization(IGenericClient client, Patient patient, Organization doctorsOffice,
-                                                  CodeableConcept vaccineCode, String lotNumber, DateTimeType occurence) {
+   private static Immunization createImmunization(IGenericClient client, Patient patient, PractitionerRole doctor,
+                                                  CodeableConcept vaccineCode, String lotNumber, Calendar occurence) {
       Immunization vaccine = new Immunization()
          .setPatient(new Reference(patient))
          .setVaccineCode(vaccineCode)
          .setLotNumber(lotNumber)
-         .setOccurrence(occurence)
-         .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctorsOffice))))
+         .setOccurrence(new DateTimeType(occurence))
+         .setPerformer(Collections.singletonList(new Immunization.ImmunizationPerformerComponent(new Reference(doctor))))
          .setStatus(Immunization.ImmunizationStatus.COMPLETED);
 
       MethodOutcome vaccineOutcome = createResource(client, vaccine);
@@ -296,10 +303,12 @@ public class FHIRUebung7 {
       return vaccine;
    }
 
-   private static Observation createImmunizationTest(IGenericClient client, Patient patient, Organization performer,
+   private static Observation createImmunizationTest(IGenericClient client, Patient patient, PractitionerRole performer,
                                                      CodeableConcept testType, CodeableConcept testResult, Quantity quantitativeResult,
                                                      CodeableConcept method, List<CodeableConcept> interpretations) {
-      Observation immunizationTest = new Observation()
+      Calendar cal = Calendar.getInstance();
+      cal.set(1912, 5, 6);
+       Observation immunizationTest = new Observation()
          .addCategory(
             new CodeableConcept(
                new Coding("http://terminology.hl7.org/CodeSystem/observation-category", ObservationCategory.LABORATORY.toCode(), ObservationCategory.LABORATORY.getDisplay())
@@ -307,7 +316,7 @@ public class FHIRUebung7 {
          .setCode(testType)
          .setSubject(new Reference(patient))
          .addPerformer(new Reference(performer))
-         .setEffective(new DateTimeType(new GregorianCalendar(1912, Calendar.JUNE, 07)))
+         .setEffective(new DateTimeType(cal))
          .setStatus(Observation.ObservationStatus.FINAL);
          if(testResult != null) {
             immunizationTest.setValue(testResult);
@@ -337,19 +346,20 @@ public class FHIRUebung7 {
       return outcome;
    }
 
-   private static Composition createComposition(IGenericClient client,FhirContext ctx, Composition comp, Patient patient, Organization performer,
+   private static Composition createComposition(IGenericClient client,FhirContext ctx, Composition comp, Patient patient, PractitionerRole performer,
                                                 Observation riskfactor, List<Immunization> I, List<Observation> antibodyTests, Observation bloodType) {
-      comp
+      Calendar cal = Calendar.getInstance();
+      cal.set(1846, 9, 0);
+       comp
          .setStatus(Composition.CompositionStatus.FINAL)
          .setType(new CodeableConcept(
             new Coding("http://loinc.org", "11503-0", "Medical records")
          ))
          .setSubject(new Reference(patient))
-         .setDate(new GregorianCalendar(1846, Calendar.OCTOBER, 1).getTime())
+         .setDate(cal.getTime())
          .setAuthor(Collections.singletonList(new Reference(performer)))
          .setSubject(new Reference(patient))
-         .setTitle("INTERNATIONALE BESCHEINIGUNGEN ÜBER IMPFUNGEN UND IMPFBUCH");;
-      // todo: text
+         .setTitle("INTERNATIONALE IMPF- ODER PROPHYLAXEBESCHEINIGUNG");;
 
       Composition.SectionComponent deckblattSection =
          new Composition.SectionComponent()
