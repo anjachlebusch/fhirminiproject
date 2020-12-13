@@ -61,7 +61,7 @@ function prettyPrintDocument(data) {
                     {'<>':'p','html':'Reisepass-Nr. oder Nr. des Pers.-Ausweises: ${identifier.1.value}'}
                 ]
             },
-            'patientName': {'<>':'p','html': 'Ausgestellt für: ${family}, ${given.0}'},
+            'patientName': {'<>':'p','html': 'Ausgestellt f&uuml;r: ${family}, ${given.0}'},
             'address': {'<>':'p','html': 'Adresse: ${line.0}; ${postalCode} ${city}'},
             'immunization': {'<>':'tbody','html':[
                 {'<>':'td','html':'${occurrenceDateTime}'},
@@ -144,7 +144,7 @@ function prettyPrintDocument(data) {
                         //Röteln
                         if(entry[i].resource.code.coding[0].code == "22497-2"){
                             return json2html.transform(this,{ '<>':'div','class': 'roetelnTests', 'html':[
-                                {'<>':'h3', 'html': "Röteln-Antikörper-Bestimmungen"},
+                                {'<>':'h3', 'html': "R&ouml;teln-Antik&ouml;rper-Bestimmungen"},
                                 {'<>':'table', 'html':[
                                     {'<>':'thead','html':[
                                         {'<>':'th','html':'Datum'},
@@ -177,11 +177,11 @@ function prettyPrintDocument(data) {
                         //Sonstige Tests
                         else {
                             return json2html.transform(this,{ '<>':'div','class': 'otherTests', 'html':[
-                                {'<>':'h3', 'html': "Ergebnisse von Antikörperuntersuchungen"},
+                                {'<>':'h3', 'html': "Ergebnisse von Antik&ouml;rperuntersuchungen"},
                                 {'<>':'table', 'html':[
                                     {'<>':'thead','html':[
                                         {'<>':'th','html':'Datum'},
-                                        {'<>':'th','html':'Unterschung auf / durchgeführter Test'},
+                                        {'<>':'th','html':'Unterschung auf / durchgef&uuml;hrter Test'},
                                         {'<>':'th','html':'Ergebnis'},
                                         {'<>':'th','html':'Arztpraxis'},
                                     ]},
